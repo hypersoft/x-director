@@ -275,7 +275,7 @@ OPTION SETTINGS
  -e: FILTER   Perform an exclude match against FILTER(s). Multiple filters may
               be supplied as a single parameter. The shell will expand the
               FILTERS according to IFS (see also OPTIONS: \`-z': and \`-z') for
-							control of the shell expansion.
+              control of the shell expansion.
 
  -i: FILTER   Perform an include match against FILTER(s).
  -m: NUMBER   Sets the max-depth of the catalog function to NUMBER.
@@ -291,7 +291,7 @@ FUNCTIONS
 
  catalog DIRECTORY [...]  Lists the files in directories.
  directories FILE ...     Lists only the directories in FILE(S).
- files FILE ...           Lists only the FILE(S) in directories.
+ files FILE ...           Lists only the file(s) in FILE(S).
 
  filter DATA [-e] FIND-PATTERN ...
                 
@@ -350,3 +350,4 @@ echo type: $COMMAND --help or $COMMAND -h for $COMMAND help;
 exit 1;
 
 }  >&2;
+
