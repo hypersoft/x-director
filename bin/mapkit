@@ -278,10 +278,10 @@ OPTION SETTINGS
               control of the shell expansion.
 
  -i: FILTER   Perform an include match against FILTER(s).
- -m: NUMBER   Sets the max-depth of the catalog function to NUMBER.
+ -l: NUMBER   Sets the max-depth of the catalog function to NUMBER.
  
  -q: TEXT     Set regular-expression quoting character to TEXT for internal
-              scripts. This feature only affects the filter function.
+              scripts. This feature only affects primary expressions.
  
  -z: TEXT     Sets the IFS variable to TEXT. See your shell manual about IFS.
 
