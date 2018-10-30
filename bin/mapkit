@@ -295,7 +295,7 @@ FUNCTIONS
 
  filter DATA [-e] FIND-PATTERN ...
                 
-	Finds FIND-PATTERN in the input records, and excludes or includes the record.
+  Finds FIND-PATTERN in the input records, and excludes or includes the record.
   the default operation is include. use option \`-e' to exclude. Using \`-e'
   with this function is different than using OPTION \`-e'. This Using \`-e' 
   with this FUNCTION does not require multiple filters as a single argument.
