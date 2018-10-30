@@ -1,0 +1,352 @@
+#!/bin/bash
+
+set -e;
+
+IFS=$' \t\n'; # do no dummy stuff
+
+COMMAND=$(basename $0);
+BAD_SUBST_PARAMS="wrong number of parameters: expected pattern and replacement pairs following data"
+
+function subset.script() {
+
+	local head=${head:-''} tail=${tail:-''} split=${split:-$'\1'} quote=${quote:-\'};
+
+	(( $# % 2 || $# == 0 )) && {
+		echo
+		echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: an invalid number of substitution specifications were provided.
+		echo
+		echo $'\t'try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT[, MATCH-PATTERN REPLACEMENT-TEXT[, ...]]
+		echo
+		exit 1;
+	} >&2;
+	echo -n sed $flags;
+	while (( $# )); do printf " -e ${quote}s%sg${quote}" "${split}${head}${1}${tail}${split}${2}${split}"; shift 2; done;
+	echo ';'
+}
+
+function pipe() {
+	local pre= cmd=$1; shift;
+	[[ "$cmd" == links && $1 == -e ]] && {
+		pre=-e; shift;
+	}
+	[[ "$cmd" == filter ]] && {
+		$cmd "$(</dev/stdin)" "${@}";
+		return;
+	}
+	$cmd $pre $(</dev/stdin) "${@}";
+}
+
+function subset() {
+
+	(( $# == 0 )) && {
+		echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: 0 parameters were provided.
+		echo try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT
+		exit 1;
+	} >&2;
+
+	local content="$1"; shift;
+
+	[[ "$content" =~ ^$ ]] && {
+		echo $COMMAND: $FUNCNAME: error: no data was given\; aborting
+		exit 1;
+	} >&2;
+
+	# the following parameters are paired in twos:
+	# $1 find-pattern, $2 replacement[, ...]
+	# this format allows you to perform successive substitutions in a reliable way.
+
+	(( $# % 2 )) && {
+		echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: an odd number of substitution specifications were provided.
+		echo try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT[, MATCH-PATTERN REPLACEMENT-TEXT[, ...]]
+		exit 1;
+	} >&2;
+	source <(subset.script "$@") < <(printf "%s\n" "$content");
+}
+
+function filter.script() {
+true
+}
+
+function filter() {
+	local head=${head:-''} tail=${tail:-''} quote=${quote:-\'};
+	local content="$1"; shift;
+	[[ "$1" == -e ]] && local flags+=' -v';
+	source <(
+		echo -n grep $flags; 
+		while (( $# )); do printf " -e ${quote}${head}%s${tail}${quote}" "$1"; shift; done; 
+		echo ';'
+	) < <(printf "%s\n" "$content");
+}
+
+function catalog() {
+	local dir= file=
+	if [[ "$d" == '' ]]; then local -i d=0; fi;
+	d=$d+1;
+	(( max > 0 && d > max )) && return;			
+	for dir; do
+		for file in "${dir%/}"/*; do
+			[ -e "$file" ] || [ -L "$file" ] || continue
+			if [ -d "$file" ]; then
+				printf "%s\n" "$file"
+				catalog "$file"
+			else
+				printf "%s\n" "$file"
+			fi
+		done
+	done;
+}
+
+function realpaths() {
+	for arg; do realpath "$arg" || continue; done;
+	true;
+}
+
+function parents() {
+	for arg; do
+		[[ $arg == / ]] && continue;
+		dirname "$arg" || continue;
+	done;
+	true;
+}
+
+function names() {
+	for arg; do
+		[[ $arg == / ]] && continue;
+		basename "$arg" || continue; 
+	done;
+	true;
+}
+
+function files() {
+	for file; do [[ -d "$file" ]] && continue; [[ -e "$file" ]] && echo "$file"; done;
+	true;
+}
+
+function links() {
+	[[ $1 == -e ]] && {
+		shift;
+		for file; do
+			if [[ -h "$file" ]]; then continue; fi;
+			echo $file;
+		done;
+		return 0;
+	}
+	for file; do
+		if [[ -h "$file" ]]; then echo $file; fi;
+	done;
+	true;
+}
+
+function directories() {
+	for file; do 
+		if [[ -d $file ]]; then echo "$file"; fi;
+	done;
+	true;
+}
+
+function -e:() { # runs exclusive filter; matches should be seprated by IFS[0-2]
+	"${@:2}" | flags+=' -v' pipe filter $1;
+		exit $?
+}
+
+function -i:() { # runs inclusive regular expression filter; matches should be seprated by IFS[0-2]
+	"${@:2}" | pipe filter $1;
+		exit $?
+}
+
+function -l:() { # catalog depth limit
+	max=$1 "${@:2}";
+		exit $?
+}
+
+function -f() { # filters content by existing files
+		"$@" | pipe files;
+		exit $?
+}
+
+function -d() { # filters content by existing directories
+	"$@" | pipe directories;
+		exit $?
+}
+
+function -z() { # reset IFS
+	IFS=$' \t\n' "$@";
+		exit $?
+}
+
+function -z:() { # sets IFS: PARAMETER
+	IFS=$1 "${@:2}";
+		exit $?
+}
+
+function -E() { # extended regular expressions - lol
+	flags='-E' "$@";
+		exit $?
+}
+
+function -R() {
+	"$@" | pipe realpaths;
+		exit $?
+}
+
+function -l() {
+	"$@" | pipe links;
+		exit $?
+}
+
+function -L() {
+	"$@" | pipe links -e;
+		exit $?
+}
+
+function -p() {
+	"$@" | pipe parents;
+		exit $?
+}
+
+function -q:() {
+	quote=$1 "${@:2}";
+		exit $?
+}
+
+function -Q:() { # this option only affects subset
+	split=$1 "${@:2}";
+		exit $?
+}
+
+function -T:() {
+	tail=$1 "${@:2}";
+		exit $?	
+}
+
+function -H:() {
+	head=$1 "${@:2}";
+		exit $?	
+}
+
+function -O:() {
+	flags=$1 "${@:2}";
+		exit $?		
+}
+
+function dump.function.table() {
+	env -i $0 declare -pF | flags='-v' pipe filter '\.' | cut -d ' ' -f3;
+}
+
+function -h() {
+	--help "$@";
+}
+
+function --help() {
+
+cat <<EOF
+
+General Purpose Mutliple Record File and String Utility
+
+$COMMAND [OPTIONS] FUNCTION [...]
+
+OPTION FLAGS
+
+ --help  Show this help screen
+ -h      Show this help screen.
+
+ -E  Turn on extended regular expression features for the subset and filter
+     FUNCTIONS. This flag overrides OPTION \`-e'.
+
+ -R  Convert path record(s) to realpath(s).
+ -d  Only print existing directories.
+ -f  Only print existing files.
+ -p  Only print parent directories.
+ -l  Only print links.
+ -L  Do not print links.
+ -n  Only print file names.
+ -z  Set Standards Compliant IFS = \$' \t\n'
+
+OPTION SETTINGS
+
+ -T: TEXT     Sets the TAIL of all primary expressions to text.
+ -H: TEXT     Sets the HEAD of all primary expressions to TEXT.
+ -O: OPTIONS  Sets the main OPTIONS to pass to both sed and grep to OPTIONS.
+
+ -Q: TEXT     Sets the internal expression separator of the subset FUNCTION
+              to TEXT. You may never need this option. The default is \$'\1'.
+              This feature only affects the subset FUNCTION.
+
+ -e: FILTER   Perform an exclude match against FILTER(s). Multiple filters may
+              be supplied as a single parameter. The shell will expand the
+              FILTERS according to IFS (see also OPTIONS: \`-z': and \`-z') for
+							control of the shell expansion.
+
+ -i: FILTER   Perform an include match against FILTER(s).
+ -m: NUMBER   Sets the max-depth of the catalog function to NUMBER.
+ 
+ -q: TEXT     Set regular-expression quoting character to TEXT for internal
+              scripts. This feature only affects the filter function.
+ 
+ -z: TEXT     Sets the IFS variable to TEXT. See your shell manual about IFS.
+
+FUNCTIONS
+
+ NOTE: most FUNCTIONS have shortcuts for advanced use in the option section.
+
+ catalog DIRECTORY [...]  Lists the files in directories.
+ directories FILE ...     Lists only the directories in FILE(S).
+ files FILE ...           Lists only the FILE(S) in directories.
+
+ filter DATA [-e] FIND-PATTERN ...
+                
+	Finds FIND-PATTERN in the input records, and excludes or includes the record.
+  the default operation is include. use option \`-e' to exclude. Using \`-e'
+  with this function is different than using OPTION \`-e'. This Using \`-e' 
+  with this FUNCTION does not require multiple filters as a single argument.
+  The first FIND-PATTERN cannot be: \`-e'.
+
+ names FILE ...           Lists only the name parts of FILE(S).
+ parents FILE ...         Lists only the parent-directories of FILE(S).
+
+ links [-e] FILE ...      Lists only the links in FILE(S). With \`-e', lists
+                          all files which are NOT links. The first FILE cannot
+                          be: \`-e'.
+
+ pipe FUNCTION ...        Reads the standard input and sends it as the data
+                          portion of FUNCTION OR COMMAND, forwarding all
+                          remaining parameters to the FUNCTION OR COMMAND.
+
+ realpaths FILE ...       List only the realpath(s) of FILE(S).
+
+ subset DATA FIND-PATTERN REPLACE-TEXT ...
+
+NOTE:
+
+ (1) OPTIONS affect the output of FUNCTIONS.
+ (2) OPTIONS are precedented in REVERSE-ORDER.
+ (3) Separate FUNCTION OPTIONS using the pipe FUNCTION in conjunction with
+     shell pipes. Combining multiple options in the wrong way may cause
+     undesired operations.
+
+EOF
+
+exit 1;
+
+}
+
+FUNCS="--help -E -H: -L -O: -Q: -R -T: -d -e: -f -h -i: -l -l: -p -q: -z -z: catalog directories files filter links names parents pipe realpaths subset";
+
+(( DEBUG == 1 )) && {
+	DEBUG="dump.function.table declare";
+}
+
+for name in $FUNCS $DEBUG; do
+	[[ $1 == $name ]] && {
+		"$@";
+		exit $?;
+	}
+done;
+
+{
+
+echo invalid command: "\`$1'";
+echo type: $COMMAND --help or $COMMAND -h for $COMMAND help;
+exit 1;
+
+}  >&2;
