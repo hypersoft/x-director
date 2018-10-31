@@ -220,7 +220,7 @@ function -HT() {
 }
 
 function -T() {
-  tail=\$ call "${@:2}";
+  tail=\$ call "${@}";
 }
 
 function -T:() {
@@ -228,7 +228,7 @@ function -T:() {
 }
 
 function -H() {
-  head=\^ call "${@:2}";
+  head=\^ call "${@}";
 }
 
 function -H:() {
