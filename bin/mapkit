@@ -144,7 +144,6 @@ function directories() {
 
 function key-within-list() { # make sure you test this result in error-mode-shells
   # suitable with pipe's default to-program-input format.  
-  local -i l=$[ $# - 1 ];
   local key="${@:$#:1}";
   set -- "${@:0:$#}";
   for item; do
