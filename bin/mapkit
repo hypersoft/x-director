@@ -337,7 +337,13 @@ FUNCTIONS
 NOTE:
 
  (1) OPTIONS affect the output of FUNCTIONS.
- (2) OPTIONS are precedented in REVERSE-ORDER.
+
+ (2) OPTIONS are precedented in REVERSE-ORDER; except:
+     (1) when an OPTION is not a shortcut to a FUNCTION.
+         (1.a) if the OPTION is not a shortcut to a FUNCTION, it is instantly
+               applied to the OPTION or FUNCTION following it in the execution,
+               chain.
+               
  (3) Separate FUNCTION OPTIONS using the pipe FUNCTION in conjunction with
      shell pipes. Combining multiple options in the wrong way may cause
      undesired operations.
