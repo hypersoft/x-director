@@ -440,11 +440,9 @@ trace='' call "$@";
 
 TODO:
 
-  OPTION -t and FUNCTION trace -- user level tracing
   NON-SETTING OPTION MASHUPS IE -ERd ... == (set flags=-E; pipe directories | pipe realpaths)
   NON-SETTING OPTION MASHUP ENDING WITH OPTION SETTING
   Lesser used functions, having no short-cuts.
-  Better call tracing parameter display.
   
   RESTRICT grep and sed OPTIONS to -E -v and EMPTY only to take the stress off
   of porting. OTHER DECLARED availabilities such as sed -i are bonus. Not having
