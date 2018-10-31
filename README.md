@@ -1,5 +1,5 @@
 # mapkit
-General Purpose, Mutliple Record, File and String Utility
+General Purpose, Mutliple Record, File and String: Utility
 
 HELP:
 ```sh
