@@ -368,5 +368,3 @@ function call() {
 
 trace='' call "$@";
 
-# rebuild function list: bin/mapkit get-theatre
-
