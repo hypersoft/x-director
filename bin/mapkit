@@ -386,3 +386,10 @@ function call() {
 
 trace='' call "$@";
 
+TODO:
+
+  OPTION -t and FUNCTION trace -- user level tracing
+  NON-SETTING OPTION MASHUPS IE -ERd ... == (set flags=-E; pipe directories | pipe realpaths)
+  NON-SETTING OPTION MASHUP ENDING WITH OPTION SETTING
+  Lesser used functions, having no short-cuts.
+
