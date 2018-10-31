@@ -342,7 +342,9 @@ NOTE:
      (1) when an OPTION is not a shortcut to a FUNCTION.
          (1.a) if the OPTION is not a shortcut to a FUNCTION, it is instantly
                applied THROUGH the OPTION or FUNCTION following it in the
-               command specification.
+               command specification. Which means all environment OPTIONS are
+               immediately effective at the beginning of the command following
+               it; being of the form: [ENVIRONMENT] OPTION OR FUNCTION.
                
  (3) Separate FUNCTION OPTIONS using the pipe FUNCTION in conjunction with
      shell pipes. Combining multiple options in the wrong way may cause
