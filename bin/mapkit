@@ -4,8 +4,8 @@ set -e;
 
 IFS=$' \t\n'; # do no dummy stuff
 
-COMMAND=$(basename $0);
-BAD_SUBST_PARAMS="wrong number of parameters: expected pattern and replacement pairs following data"
+COMMAND=$(basename $0); # smart stuff is ok
+BAD_SUBST_PARAMS="wrong number of parameters: expected pattern and replacement parameter pairs following data"
 
 function subset.script() {
 
@@ -338,7 +338,7 @@ NOTE:
 
  (1) OPTIONS affect the output of FUNCTIONS.
 
- (2) OPTIONS are precedented in REVERSE-ORDER; except:
+ (2) OPTIONS are executed in REVERSE-ORDER of command specification; except:
      (1) when an OPTION is not a shortcut to a FUNCTION.
          (1.a) if the OPTION is not a shortcut to a FUNCTION, it is instantly
                applied THROUGH the OPTION or FUNCTION following it in the
