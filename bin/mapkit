@@ -410,7 +410,6 @@ function call() {
   local name trace=${trace}
   [[ "$1" != trace ]] && trace+=" <- $1";
   [[ $DEBUG == 1 ]] && {  
-      echo $' ∞ 'read right to left for output [composition] order.
     key-within-list $(echo $FUNCTIONS) "$1" && {
       echo
       echo $command trace: 
