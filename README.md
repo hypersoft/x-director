@@ -10,4 +10,4 @@ bin/mapkit --help
 
 \> "Are they regular or irregular"?
 
-\< "I don't know, I think they are extended"
+\< "I don't know, I think they are extended".
