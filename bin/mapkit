@@ -345,9 +345,10 @@ FUNCTIONS
 
  realpaths FILE ...       List only the realpath(s) of FILE(S).
 
- key-within-list VALUES...  KEY  Searches through values for key. Returns
-                            success if literally found. Ready made for pipe
-                            FUNCTION.
+ key-within-list VALUES... KEY  
+ 
+   Searches through values for key. Returns success if literally found. Ready
+   made for pipe FUNCTION.
 
  subset DATA FIND-PATTERN REPLACE-TEXT ...
 
