@@ -248,11 +248,11 @@ $COMMAND [OPTIONS] FUNCTION [...]
 
 General Purpose, Mutliple Record, File and String: Utility
 
-(C) 2018; Triston-Jerard: Taylor;
-          Hypersoft-Systems: U.-S.-A.
-
 License: MIT
 GitHub: https://github.com/hypersoft/mapkit
+
+(C) 2018; Triston-Jerard: Taylor;
+          Hypersoft-Systems: U.-S.-A.
 
 OPTION FLAGS
 
@@ -341,6 +341,15 @@ NOTE:
  (3) Separate FUNCTION OPTIONS using the pipe FUNCTION in conjunction with
      shell pipes. Combining multiple options in the wrong way may cause
      undesired operations.
+
+END $COMMAND --help ############################################################
+
+$COMMAND [OPTIONS] FUNCTION [...]
+
+General Purpose, Mutliple Record, File and String: Utility
+
+License: MIT
+GitHub: https://github.com/hypersoft/mapkit
 
                                            (C) 2018; Triston-Jerard: Taylor;
                                                      Hypersoft-Systems: U.-S.-A.
