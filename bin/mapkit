@@ -415,13 +415,13 @@ function call() {
       echo
       echo $command trace: 
       echo
-      echo $'  0 '
-      echo  '  + '
+      echo $'  0 '[OUT->]
+      echo  '  + '[compile]
       echo $'  1 'read OPTIONS left to right, for logical [dependency] order
-      echo $'  + '
+      echo $'  + '[direction-flip]
       echo $' -1 'read right to left for output [composition] order.
-      echo $'  = '
-      echo $'  0 '
+      echo $'  = '[(in function-level operations)]
+      echo $'  0 '[<-IN: back through call chain]
       echo
       echo [OUT] $trace [IN]
       echo
