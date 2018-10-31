@@ -240,7 +240,7 @@ function --help() {
 
 cat <<EOF
 
-General Purpose Mutliple Record File and String Utility
+General Purpose, Mutliple Record, File and String: Utility
 
 $COMMAND [OPTIONS] FUNCTION [...]
 
