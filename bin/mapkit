@@ -146,7 +146,7 @@ function key-within-list() { # make sure you test this result in error-mode-shel
   # suitable with pipe's default to-program-input format.  
   local -i l=$[ $# - 1 ];
   local key="${@:$#:1}";
-  set -- "${@:0:l}";
+  set -- "${@:0:$#}";
   for item; do
    [[ "$item" == "$key" ]] && {
      return 0;
@@ -343,6 +343,9 @@ FUNCTIONS
                           portion of FUNCTION OR COMMAND, forwarding all
                           remaining parameters to the FUNCTION OR COMMAND.
 
+ trace SOMETHING     Performs a debug trace explaining dependency chain,
+                     backward AND forward [quantum-filters ;)].
+                     
  realpaths FILE ...       List only the realpath(s) of FILE(S).
 
  key-within-list VALUES... KEY  
@@ -393,16 +396,29 @@ exit 1;
 }
 
 OPTIONS="--get-theatre --help -E -H -H: -HT -L -O: -Q: -R -T -T: -TH -d -e: -f -h -i: -l -l: -p -q: -z -z:";
-FUNCTIONS="catalog directories files filter key-within-list links names parents pipe realpaths subset";
+FUNCTIONS="catalog directories files filter key-within-list links names parents pipe realpaths subset trace ";
 
 (( DEBUG == 1 )) && {
   DEBUG_FUNCTIONS="declare dump.function.table filter.script subset.script";
 }
 
+function trace() {
+  DEBUG=1 call "$@";
+}
+
 function call() {
-  local name trace="$1: "${trace};
+  local name trace=${trace}
+  [[ "$1" != trace ]] && trace+=" <- $1";
   [[ $DEBUG == 1 ]] && {  
-    key-within-list $(echo $FUNCTIONS) "$1" && echo $trace >&2;
+    key-within-list $(echo $FUNCTIONS) "$1" && {
+      echo
+      echo $command trace: 
+      echo $'  'read OPTIONS left to right, for logical order
+      echo $'  'read right to left for output composition order.
+      echo
+      echo [OUT] $trace [IN]
+      echo
+    } >&2;
   }
   key-within-list $OPTIONS $FUNCTIONS $DEBUG_FUNCTIONS "$1" && { 
     "$@"; exit $?; 
