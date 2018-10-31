@@ -305,7 +305,7 @@ OPTION SETTINGS
 
 FUNCTIONS
 
- NOTE: most FUNCTIONS have shortcuts for advanced use in the option section.
+ NOTE: most FUNCTIONS have shortcuts in the OPTIONS section for advanced use.
 
  catalog DIRECTORY [...]  Lists the files in directories.
  directories FILE ...     Lists only the directories in FILE(S).
