@@ -29,7 +29,7 @@ function pipe() {
   [[ "$cmd" == links && $1 == -e ]] && {
     pre=-e; shift;
   }
-  [[ "$cmd" == filter ]] && {
+  [[ "$cmd" == filter  || $cmd == subset ]] && {
     $cmd "$(</dev/stdin)" "${@}";
     return;
   }
@@ -227,7 +227,9 @@ function -O:() {
 }
 
 function dump.function.table() {
-  env -i DEBUG=1 $0 declare -pF | flags='-v' pipe filter '\.' | cut -d ' ' -f3;
+  local all="$(env -i DEBUG=1 $0 declare -pF | flags='-v' pipe filter '\.' | cut -d ' ' -f3)"
+  echo OPTIONS=\"$(filter "$all" '^-')\"\;;
+  echo FUNCTIONS=\"$(filter "$all" -e '^-' '^call$')\"\;;
 }
 
 function -h() {
@@ -359,4 +361,6 @@ function call() {
 }
 
 trace='' call "$@";
+
+# rebuild function list: DEBUG=1 bin/mapkit dump.function.table
 
