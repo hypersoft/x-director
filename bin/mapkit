@@ -345,6 +345,11 @@ NOTE:
                command specification. Which means all environment OPTIONS are
                immediately effective at the beginning of the command following
                it; being of the form: [ENVIRONMENT] OPTION OR FUNCTION.
+
+               [see: the function definitions of the OPTIONS in source code
+                     to verify the above form.
+                     file://$(realpath $0)
+               ]
                
  (3) Separate FUNCTION OPTIONS using the pipe FUNCTION in conjunction with
      shell pipes. Combining multiple options in the wrong way may cause
