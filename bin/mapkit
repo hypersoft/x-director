@@ -428,3 +428,7 @@ TODO:
   of porting. OTHER DECLARED availabilities such as sed -i are bonus. Not having
   an interface defined makes porting in future time nightmarish.
   
+  help section about regular: regular expressions -- lol and extended regular
+  expressions.
+  
+  
