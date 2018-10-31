@@ -401,18 +401,16 @@ FUNCTIONS="catalog directories files filter key-within-list links names parents 
 
 function call() {
   local name trace="$1: "${trace};
-   [[ $DEBUG == 1 ]] && {  
-    for name in $FUNCTIONS; do
-      [[ $1 == $name ]] && echo $trace >&2;
-    done;
+  [[ $DEBUG == 1 ]] && {  
+    key-within-list $(echo $FUNCTIONS) "$1" && echo $trace >&2;
   }
-  for name in $OPTIONS $FUNCTIONS $DEBUG_FUNCTIONS; do
-    [[ $1 == $name ]] && { "$@"; exit $?; }
-  done;
+  key-within-list $OPTIONS $FUNCTIONS $DEBUG_FUNCTIONS "$1" && { 
+    "$@"; exit $?; 
+  }
   {
-  echo invalid command: "\`$1'";
-  echo type: $COMMAND --help or $COMMAND -h for $COMMAND help;
-  exit 1;
+    echo invalid command: "\`$1'";
+    echo type: $COMMAND --help or $COMMAND -h for $COMMAND help;
+    exit 1;
   }  >&2;
 }
 
