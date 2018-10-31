@@ -232,6 +232,10 @@ function dump.function.table() {
   echo FUNCTIONS=\"$(filter "$all" -e '^-' '^call$')\"\;;
 }
 
+function get-theatre() {
+  dump.function.table;
+}
+
 function -h() {
   --help "$@";
 }
@@ -337,7 +341,7 @@ exit 1;
 }
 
 OPTIONS="--help -E -H -H: -HT -L -O: -Q: -R -T -T: -TH -d -e: -f -h -i: -l -l: -p -q: -z -z:"
-FUNCTIONS="catalog directories files filter links names parents pipe realpaths subset";
+FUNCTIONS="catalog directories files filter get-theatre links names parents pipe realpaths subset";
 
 (( DEBUG == 1 )) && {
   DEBUG_FUNCTIONS="declare dump.function.table filter.script subset.script";
