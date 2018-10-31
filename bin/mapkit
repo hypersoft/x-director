@@ -417,7 +417,7 @@ function call() {
       echo $'  0 '[:OUT-\>]
       echo  '  + '[compile]
       echo $'  1 'read OPTIONS left to right, for logical [dependency] order
-      echo $'  + '[direction-flip]
+      echo $'  + '[direction-flip: enter/exit/return]
       echo $' -1 'read right to left for output [composition] order.
       echo $'  = '[\(in function-level operations\)]
       echo $'  0 '[\<-IN: back through call chain]
