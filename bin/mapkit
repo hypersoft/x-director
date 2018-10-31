@@ -415,7 +415,7 @@ function call() {
       echo
       echo $command trace: 
       echo
-      echo $'  0 '[OUT-\>]
+      echo $'  0 '[:OUT-\>]
       echo  '  + '[compile]
       echo $'  1 'read OPTIONS left to right, for logical [dependency] order
       echo $'  + '[direction-flip]
