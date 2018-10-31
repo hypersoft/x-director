@@ -253,6 +253,8 @@ OPTION FLAGS
  --help  Show this help screen
  -h      Show this help screen.
 
+ get-theatre  Debug OPTION. Generates a hash-key-list of FUNCTIONS and OPTIONS.
+
  -E  Turn on extended regular expression features for the subset and filter
      FUNCTIONS. This flag overrides OPTION \`-e'.
 
@@ -366,5 +368,5 @@ function call() {
 
 trace='' call "$@";
 
-# rebuild function list: DEBUG=1 bin/mapkit dump.function.table
+# rebuild function list: bin/mapkit get-theatre
 
