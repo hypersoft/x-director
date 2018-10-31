@@ -142,7 +142,7 @@ function directories() {
   true;
 }
 
-function key-in-list() { # make sure you test this result in error-mode-shells
+function key-within-list() { # make sure you test this result in error-mode-shells
   # suitable with pipe's default to-program-input format.  
   local -i l=$[ $# - 1 ];
   local key="${@:$#:1}";
@@ -345,7 +345,7 @@ FUNCTIONS
 
  realpaths FILE ...       List only the realpath(s) of FILE(S).
 
- key-in-list VALUES... KEY  Searches through values for key. Returns success
+ key-within-list VALUES... KEY  Searches through values for key. Returns success
                             if literally found. Ready made for pipe FUNCTION.
 
  subset DATA FIND-PATTERN REPLACE-TEXT ...
@@ -364,7 +364,8 @@ NOTE:
 
                [see: the function definitions of the OPTIONS in source code
                      to verify the above form.
-                     file://$(realpath $0)
+                
+                  file://$(realpath $0)
                ]
                
  (3) Separate FUNCTION OPTIONS using the pipe FUNCTION in conjunction with
@@ -390,7 +391,7 @@ exit 1;
 }
 
 OPTIONS="--get-theatre --help -E -H -H: -HT -L -O: -Q: -R -T -T: -TH -d -e: -f -h -i: -l -l: -p -q: -z -z:";
-FUNCTIONS="catalog directories files filter key-in-list links names parents pipe realpaths subset";
+FUNCTIONS="catalog directories files filter key-within-list links names parents pipe realpaths subset";
 
 (( DEBUG == 1 )) && {
   DEBUG_FUNCTIONS="declare dump.function.table filter.script subset.script";
