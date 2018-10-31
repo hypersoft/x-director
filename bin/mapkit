@@ -284,7 +284,7 @@ OPTION SETTINGS
               control of the shell expansion.
 
  -i: FILTER   Perform an include match against FILTER(s).
- -l: NUMBER   Sets the max-depth of the catalog function to NUMBER.
+ -l: NUMBER   Sets the max-depth of the catalog FUNCTION to NUMBER.
  
  -q: TEXT     Set regular-expression quoting character to TEXT for internal
               scripts. This feature only affects primary expressions.
@@ -303,7 +303,7 @@ FUNCTIONS
                 
   Finds FIND-PATTERN in the input records, and excludes or includes the record.
   the default operation is include. use option \`-e' to exclude. Using \`-e'
-  with this function is different than using OPTION \`-e'. This Using \`-e' 
+  with this FUNCTION is different than using OPTION \`-e'. This Using \`-e' 
   with this FUNCTION does not require multiple filters as a single argument.
   The first FIND-PATTERN cannot be: \`-e'.
 
