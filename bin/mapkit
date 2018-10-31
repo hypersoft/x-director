@@ -9,232 +9,229 @@ BAD_SUBST_PARAMS="wrong number of parameters: expected pattern and replacement p
 
 function subset.script() {
 
-	local head=${head:-''} tail=${tail:-''} split=${split:-$'\1'} quote=${quote:-\'};
+  local head=${head:-''} tail=${tail:-''} split=${split:-$'\1'} quote=${quote:-"'"};
 
-	(( $# % 2 || $# == 0 )) && {
-		echo
-		echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: an invalid number of substitution specifications were provided.
-		echo
-		echo $'\t'try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT[, MATCH-PATTERN REPLACEMENT-TEXT[, ...]]
-		echo
-		exit 1;
-	} >&2;
-	echo -n sed $flags;
-	while (( $# )); do printf " -e ${quote}s%sg${quote}" "${split}${head}${1}${tail}${split}${2}${split}"; shift 2; done;
-	echo ';'
+  (( $# % 2 || $# == 0 )) && {
+    echo
+    echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: an invalid number of substitution specifications were provided.
+    echo
+    echo $'\t'try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT[, MATCH-PATTERN REPLACEMENT-TEXT[, ...]]
+    echo
+    exit 1;
+  } >&2;
+  echo -n sed $flags;
+  while (( $# )); do printf " -e ${quote}s%sg${quote}" "${split}${head}${1}${tail}${split}${2}${split}"; shift 2; done;
+  echo ';'
 }
 
 function pipe() {
-	local pre= cmd=$1; shift;
-	[[ "$cmd" == links && $1 == -e ]] && {
-		pre=-e; shift;
-	}
-	[[ "$cmd" == filter ]] && {
-		$cmd "$(</dev/stdin)" "${@}";
-		return;
-	}
-	$cmd $pre $(</dev/stdin) "${@}";
+  local pre= cmd=$1; shift;
+  [[ "$cmd" == links && $1 == -e ]] && {
+    pre=-e; shift;
+  }
+  [[ "$cmd" == filter ]] && {
+    $cmd "$(</dev/stdin)" "${@}";
+    return;
+  }
+  $cmd $pre $(</dev/stdin) "${@}";
 }
 
 function subset() {
 
-	(( $# == 0 )) && {
-		echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: 0 parameters were provided.
-		echo try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT
-		exit 1;
-	} >&2;
+  (( $# == 0 )) && {
+    echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: 0 parameters were provided.
+    echo try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT
+    exit 1;
+  } >&2;
 
-	local content="$1"; shift;
+  local content="$1"; shift;
 
-	[[ "$content" =~ ^$ ]] && {
-		echo $COMMAND: $FUNCNAME: error: no data was given\; aborting
-		exit 1;
-	} >&2;
+  [[ "$content" =~ ^$ ]] && {
+    echo $COMMAND: $FUNCNAME: error: no data was given\; aborting
+    exit 1;
+  } >&2;
 
-	# the following parameters are paired in twos:
-	# $1 find-pattern, $2 replacement[, ...]
-	# this format allows you to perform successive substitutions in a reliable way.
+  # the following parameters are paired in twos:
+  # $1 find-pattern, $2 replacement[, ...]
+  # this format allows you to perform successive substitutions in a reliable way.
 
-	(( $# % 2 )) && {
-		echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: an odd number of substitution specifications were provided.
-		echo try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT[, MATCH-PATTERN REPLACEMENT-TEXT[, ...]]
-		exit 1;
-	} >&2;
-	source <(subset.script "$@") < <(printf "%s\n" "$content");
+  (( $# % 2 )) && {
+    echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: an odd number of substitution specifications were provided.
+    echo try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT[, MATCH-PATTERN REPLACEMENT-TEXT[, ...]]
+    exit 1;
+  } >&2;
+  source <(subset.script "$@") < <(printf "%s\n" "$content");
 }
 
 function filter.script() {
-true
+    local head=${head:-''} tail=${tail:-''} quote=${quote:-"'"};
+    [[ "$1" == -e ]] && local flags+=' -v';
+    echo -n grep $flags; 
+    while (( $# )); do printf " -e ${quote}${head}%s${tail}${quote}" "$1"; shift; done; 
+    echo ';';  
 }
 
 function filter() {
-	local head=${head:-''} tail=${tail:-''} quote=${quote:-\'};
-	local content="$1"; shift;
-	[[ "$1" == -e ]] && local flags+=' -v';
-	source <(
-		echo -n grep $flags; 
-		while (( $# )); do printf " -e ${quote}${head}%s${tail}${quote}" "$1"; shift; done; 
-		echo ';'
-	) < <(printf "%s\n" "$content");
+  local content="$1"; shift;
+  source <(filter.script "$@") < <(printf "%s\n" "$content");
 }
 
 function catalog() {
-	local dir= file=
-	if [[ "$d" == '' ]]; then local -i d=0; fi;
-	d=$d+1;
-	(( max > 0 && d > max )) && return;			
-	for dir; do
-		for file in "${dir%/}"/*; do
-			[ -e "$file" ] || [ -L "$file" ] || continue
-			if [ -d "$file" ]; then
-				printf "%s\n" "$file"
-				catalog "$file"
-			else
-				printf "%s\n" "$file"
-			fi
-		done
-	done;
+  local dir= file=
+  if [[ "$d" == '' ]]; then local -i d=0; fi;
+  d=$d+1;
+  (( max > 0 && d > max )) && return;      
+  for dir; do
+    for file in "${dir%/}"/*; do
+      [ -e "$file" ] || [ -L "$file" ] || continue
+      if [ -d "$file" ]; then
+        printf "%s\n" "$file"
+        catalog "$file"
+      else
+        printf "%s\n" "$file"
+      fi
+    done
+  done;
 }
 
 function realpaths() {
-	for arg; do realpath "$arg" || continue; done;
-	true;
+  for arg; do realpath "$arg" || continue; done;
+  true;
 }
 
 function parents() {
-	for arg; do
-		[[ $arg == / ]] && continue;
-		dirname "$arg" || continue;
-	done;
-	true;
+  for arg; do
+    [[ $arg == / ]] && continue;
+    dirname "$arg" || continue;
+  done;
+  true;
 }
 
 function names() {
-	for arg; do
-		[[ $arg == / ]] && continue;
-		basename "$arg" || continue; 
-	done;
-	true;
+  for arg; do
+    [[ $arg == / ]] && continue;
+    basename "$arg" || continue; 
+  done;
+  true;
 }
 
 function files() {
-	for file; do [[ -d "$file" ]] && continue; [[ -e "$file" ]] && echo "$file"; done;
-	true;
+  for file; do [[ -d "$file" ]] && continue; [[ -e "$file" ]] && echo "$file"; done;
+  true;
 }
 
 function links() {
-	[[ $1 == -e ]] && {
-		shift;
-		for file; do
-			if [[ -h "$file" ]]; then continue; fi;
-			echo $file;
-		done;
-		return 0;
-	}
-	for file; do
-		if [[ -h "$file" ]]; then echo $file; fi;
-	done;
-	true;
+  [[ $1 == -e ]] && {
+    shift;
+    for file; do
+      if [[ -h "$file" ]]; then continue; fi;
+      echo $file;
+    done;
+    return 0;
+  }
+  for file; do
+    if [[ -h "$file" ]]; then echo $file; fi;
+  done;
+  true;
 }
 
 function directories() {
-	for file; do 
-		if [[ -d $file ]]; then echo "$file"; fi;
-	done;
-	true;
+  for file; do 
+    if [[ -d $file ]]; then echo "$file"; fi;
+  done;
+  true;
 }
 
 function -e:() { # runs exclusive filter; matches should be seprated by IFS[0-2]
-	"${@:2}" | flags+=' -v' pipe filter $1;
-		exit $?
+  call "${@:2}" | flags+=' -v' pipe filter $1; exit $?;
 }
 
 function -i:() { # runs inclusive regular expression filter; matches should be seprated by IFS[0-2]
-	"${@:2}" | pipe filter $1;
-		exit $?
+  call "${@:2}" | pipe filter $1; exit $?;
 }
 
 function -l:() { # catalog depth limit
-	max=$1 "${@:2}";
-		exit $?
+  max=$1 call "${@:2}"; exit $?;
 }
 
 function -f() { # filters content by existing files
-		"$@" | pipe files;
-		exit $?
+  call "$@" | pipe files; exit $?;
 }
 
 function -d() { # filters content by existing directories
-	"$@" | pipe directories;
-		exit $?
+  call "$@" | pipe directories; exit $?;
 }
 
 function -z() { # reset IFS
-	IFS=$' \t\n' "$@";
-		exit $?
+  IFS=$' \t\n' call "$@"; exit $?;
 }
 
 function -z:() { # sets IFS: PARAMETER
-	IFS=$1 "${@:2}";
-		exit $?
+  IFS=$1 call "${@:2}"; exit $?;
 }
 
 function -E() { # extended regular expressions - lol
-	flags='-E' "$@";
-		exit $?
+  flags='-E' call "$@"; exit $?;
 }
 
 function -R() {
-	"$@" | pipe realpaths;
-		exit $?
+  call "$@" | pipe realpaths; exit $?;
 }
 
 function -l() {
-	"$@" | pipe links;
-		exit $?
+  call "$@" | pipe links; exit $?;
 }
 
 function -L() {
-	"$@" | pipe links -e;
-		exit $?
+  call "$@" | pipe links -e; exit $?;
 }
 
 function -p() {
-	"$@" | pipe parents;
-		exit $?
+  call "$@" | pipe parents; exit $?;
 }
 
 function -q:() {
-	quote=$1 "${@:2}";
-		exit $?
+  quote=$1 call "${@:2}"; exit $?;
 }
 
 function -Q:() { # this option only affects subset
-	split=$1 "${@:2}";
-		exit $?
+  split=$1 call "${@:2}"; exit $?;
+}
+
+function -TH() {
+  tail=\$ head=\^ call "$@";
+}
+
+function -HT() {
+  tail=\$ head=\^ call "$@";
+}
+
+function -T() {
+  tail=\$ call "${@:2}"; exit $?;
 }
 
 function -T:() {
-	tail=$1 "${@:2}";
-		exit $?	
+  tail=$1 call "${@:2}"; exit $?;
+}
+
+function -H() {
+  head=\^ call "${@:2}"; exit $?;
 }
 
 function -H:() {
-	head=$1 "${@:2}";
-		exit $?	
+  head=$1 call "${@:2}"; exit $?;
 }
 
 function -O:() {
-	flags=$1 "${@:2}";
-		exit $?		
+  flags=$1 call "${@:2}"; exit $?;
 }
 
 function dump.function.table() {
-	env -i $0 declare -pF | flags='-v' pipe filter '\.' | cut -d ' ' -f3;
+  env -i DEBUG=1 $0 declare -pF | flags='-v' pipe filter '\.' | cut -d ' ' -f3;
 }
 
 function -h() {
-	--help "$@";
+  --help "$@";
 }
 
 function --help() {
@@ -261,6 +258,13 @@ OPTION FLAGS
  -L  Do not print links.
  -n  Only print file names.
  -z  Set Standards Compliant IFS = \$' \t\n'
+ -T  Match the tail/type of records. Uses the RX char: \`\$'
+ -H  Match the head/heading of records. Uses the RX char: \`^'
+
+ NOTE: 
+
+ (1) Combining \`-H' and \`-T' has the effect of matching: \`^...$'; where ...
+     is your primary-expression.
 
 OPTION SETTINGS
 
@@ -330,24 +334,29 @@ exit 1;
 
 }
 
-FUNCS="--help -E -H: -L -O: -Q: -R -T: -d -e: -f -h -i: -l -l: -p -q: -z -z: catalog directories files filter links names parents pipe realpaths subset";
+OPTIONS="--help -E -H: -L -O: -Q: -R -T: -d -e: -f -h -i: -l -l: -p -q: -z -z:"
+FUNCTIONS="catalog directories files filter links names parents pipe realpaths subset";
 
 (( DEBUG == 1 )) && {
-	DEBUG="dump.function.table declare";
+  DEBUG_FUNCTIONS="declare dump.function.table filter.script subset.script";
 }
 
-for name in $FUNCS $DEBUG; do
-	[[ $1 == $name ]] && {
-		"$@";
-		exit $?;
-	}
-done;
+function call() {
+  local name trace="$1: "${trace};
+   [[ $DEBUG == 1 ]] && {  
+    for name in $FUNCTIONS; do
+      [[ $1 == $name ]] && echo $trace >&2;
+    done;
+  }
+  for name in $OPTIONS $FUNCTIONS $DEBUG_FUNCTIONS; do
+    [[ $1 == $name ]] && { "$@"; exit $?; }
+  done;
+  {
+  echo invalid command: "\`$1'";
+  echo type: $COMMAND --help or $COMMAND -h for $COMMAND help;
+  exit 1;
+  }  >&2;
+}
 
-{
-
-echo invalid command: "\`$1'";
-echo type: $COMMAND --help or $COMMAND -h for $COMMAND help;
-exit 1;
-
-}  >&2;
+trace='' call "$@";
 
