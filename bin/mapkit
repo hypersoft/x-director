@@ -143,59 +143,59 @@ function directories() {
 }
 
 function -e:() { # runs exclusive filter; matches should be seprated by IFS[0-2]
-  call "${@:2}" | flags+=' -v' pipe filter $1; exit $?;
+  call "${@:2}" | flags+=' -v' pipe filter $1;
 }
 
 function -i:() { # runs inclusive regular expression filter; matches should be seprated by IFS[0-2]
-  call "${@:2}" | pipe filter $1; exit $?;
+  call "${@:2}" | pipe filter $1;
 }
 
 function -l:() { # catalog depth limit
-  max=$1 call "${@:2}"; exit $?;
+  max=$1 call "${@:2}";
 }
 
 function -f() { # filters content by existing files
-  call "$@" | pipe files; exit $?;
+  call "$@" | pipe files;
 }
 
 function -d() { # filters content by existing directories
-  call "$@" | pipe directories; exit $?;
+  call "$@" | pipe directories;
 }
 
 function -z() { # reset IFS
-  IFS=$' \t\n' call "$@"; exit $?;
+  IFS=$' \t\n' call "$@";
 }
 
 function -z:() { # sets IFS: PARAMETER
-  IFS=$1 call "${@:2}"; exit $?;
+  IFS=$1 call "${@:2}";
 }
 
 function -E() { # extended regular expressions - lol
-  flags='-E' call "$@"; exit $?;
+  flags='-E' call "$@";
 }
 
 function -R() {
-  call "$@" | pipe realpaths; exit $?;
+  call "$@" | pipe realpaths;
 }
 
 function -l() {
-  call "$@" | pipe links; exit $?;
+  call "$@" | pipe links;
 }
 
 function -L() {
-  call "$@" | pipe links -e; exit $?;
+  call "$@" | pipe links -e;
 }
 
 function -p() {
-  call "$@" | pipe parents; exit $?;
+  call "$@" | pipe parents;
 }
 
 function -q:() {
-  quote=$1 call "${@:2}"; exit $?;
+  quote=$1 call "${@:2}";
 }
 
 function -Q:() { # this option only affects subset
-  split=$1 call "${@:2}"; exit $?;
+  split=$1 call "${@:2}";
 }
 
 function -TH() {
@@ -207,23 +207,23 @@ function -HT() {
 }
 
 function -T() {
-  tail=\$ call "${@:2}"; exit $?;
+  tail=\$ call "${@:2}";
 }
 
 function -T:() {
-  tail=$1 call "${@:2}"; exit $?;
+  tail=$1 call "${@:2}";
 }
 
 function -H() {
-  head=\^ call "${@:2}"; exit $?;
+  head=\^ call "${@:2}";
 }
 
 function -H:() {
-  head=$1 call "${@:2}"; exit $?;
+  head=$1 call "${@:2}";
 }
 
 function -O:() {
-  flags=$1 call "${@:2}"; exit $?;
+  flags=$1 call "${@:2}";
 }
 
 function dump.function.table() {
