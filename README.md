@@ -1,11 +1,12 @@
-# mapkit
-General Purpose, Mutliple Record, File and String: Utility
+# Hypersoft X Director
+
+General Purpose, Mutliple Record, File, Expression and Execution: Utility
 
     ALL EXPRESSIONS, REGULARLY: EXTENDED.
 
 HELP:
 ```sh
-bin/mapkit --help
+bin/xd --help
 ```
 
 \< "I have a regular expression".
