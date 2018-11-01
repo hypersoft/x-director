@@ -620,7 +620,7 @@ $COMMAND [OPTIONS] FUNCTION [...]
 
 General Purpose, Mutliple Record, File and String: Utility
 
- ALL REGULAR EXPRESSIONS, REGULARLY: EXTENDED.
+ ALL EXPRESSIONS, REGULARLY: EXTENDED.
 
 License: MIT
 GitHub: https://github.com/hypersoft/mapkit
@@ -751,6 +751,8 @@ END $COMMAND --help ############################################################
 $COMMAND [OPTIONS] FUNCTION [...]
 
 General Purpose, Mutliple Record, File and String: Utility
+
+ ALL EXPRESSIONS, REGULARLY: EXTENDED.
 
 License: MIT
 GitHub: https://github.com/hypersoft/mapkit

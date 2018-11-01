@@ -1,6 +1,8 @@
 # mapkit
 General Purpose, Mutliple Record, File and String: Utility
 
+ ALL EXPRESSIONS, REGULARLY: EXTENDED.
+
 HELP:
 ```sh
 bin/mapkit --help
