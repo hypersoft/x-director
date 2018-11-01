@@ -754,6 +754,16 @@ trace='' call "$@";
 
 TODO:
 
+  table, rows, columns
+
+  join, split
+
+  modify case
+  
+  custom sort
+  
+  let function be any command
+  
   Lesser used functions, having no short-cuts.
     
   help section about regular: regular expressions -- lol and extended regular
