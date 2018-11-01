@@ -657,8 +657,8 @@ function parseopt() {
 
 }
 
-OPTIONS="--get-theatre --help -h: -L -Q: -R -d -e: -f -h -i: -l -p -q: -z -z:"
-FUNCTIONS="catalog directories files filter read-pipe-parameters key-within-list links names parents parseopt write-parameter-pipe  realpaths subset trace"
+OPTIONS="--get-theatre --help -L -Q: -R -d -e: -f -h -h: -i: -l -p -q: -t -t: -z -z:"
+FUNCTIONS="catalog directories files filter key-within-list links names parents parseopt read-pipe-parameters realpaths subset trace write-parameter-pipe"
 
 (( DEBUG == 1 )) && {
   DEBUG_FUNCTIONS="declare dump.function.table filter.script subset.script";
