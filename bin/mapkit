@@ -721,8 +721,6 @@ FUNCTIONS
 
    Read lines from input and send them as parameters to COMMAND or FUNCTION
    with any OPTIONS.
-   
-   [FORMERLY: pipe]
 
  write-parameter-pipe  ...  Converts all parameters to line-stream-output.
 
