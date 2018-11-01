@@ -321,33 +321,25 @@ function opkit.match() {
   return 1;
 }
 
-function opkit.keys() {
-  eval echo \${!$1[@]}\;;
-}
+function opkit.keys() { eval echo \${!$1[@]}\;; }
 
 function opkit.set() {
-  local destination=$1 assignment; shift;
-  for assignment; do
-    local key="${assignment/=*/}";
-    local value="${assignment/*=/}"
+  local destination=$1 source; shift;
+  for source; do
+    local key="${source/=*/}";
+    local value="${source/*=/}"
     printf -v ${destination}$key %s "$value"
   done;
 }
 
 function opkit.get() {
   local source=$1 name; shift;
-  for name; do
-    eval echo \${$source[$name]}\;;
-  done;
+  for name; do eval echo \"\${$source[$name]}\"\;; done;
 }
 
-function opkit.content() {
-  eval echo \${$1[@]};
-}
+function opkit.content() { eval echo \${$1[@]}; }
 
-function opkit.begin() {
-  opkit.set $1 [INDEX]=1 [SUBINDEX]=0;
-}
+function opkit.begin() { opkit.set $1 [INDEX]=1 [SUBINDEX]=0; }
 
 function opkit.dump() { 
 
@@ -367,10 +359,6 @@ function opkit.parse() {
   # the remaining parameters are parsed. the number of items parsed are
   # returned in 2[SIZE].
 
-  # the sections on first order methods which are commented out, parse the
-  # parameter as an option with a value regardless of assignment operators.
-  # they are not desirable features for the maintainer.
-  
   local OK_STATE=$1 RCRD_PARAMETER=$2; shift 2;
 
   local INDEX=$OK_STATE[INDEX] SUBINDEX=$OK_STATE[SUBINDEX];
@@ -383,10 +371,6 @@ function opkit.parse() {
   [[ "$1" =~ ^--([a-zA-Z-]*[a-zA-Z])$ ]] && {
     opkit.set $RCRD_PARAMETER [BRANCH]=1 [PARAMETER]="${!PARAMETER}";
     opkit.match "${!PARAMETER}" $(opkit.get $OK_STATE LONG) || return 11;
-#    opkit.match "${!PARAMETER}" $(opkit.get $OK_STATE SETTINGS) && {
-#      opkit.set $RCRD_PARAMETER [VALUE]="$2" [SIZE]=2;
-#      let $INDEX++;
-#    };
     let $INDEX++;
     return 0;
   }
@@ -418,10 +402,6 @@ function opkit.parse() {
     opkit.set $RCRD_PARAMETER [BRANCH]=4 [PARAMETER]="${!PARAMETER}" \
       [SHORT]=1;
     opkit.match "${!PARAMETER}" $(opkit.get $OK_STATE SHORT) || return 41;
-#    opkit.match "${!PARAMETER}" $(opkit.get $OK_STATE SETTINGS) && {
-#      opkit.set $RCRD_PARAMETER [VALUE]="$2" [SIZE]=2;
-#      let $INDEX++;
-#    };
     let $INDEX++;
     return 0;
   }
@@ -458,16 +438,10 @@ function opkit.parse() {
     opkit.match "${C}" $(opkit.get $OK_STATE SHORT) || return 71;
     let $SUBINDEX++;
     if (( $SUBINDEX == length )); then
-      eval $RCRD_PARAMETER[SIZE]=1;
-#      opkit.match "${C}" $(opkit.get $OK_STATE SETTINGS) && {
-#        opkit.set $RCRD_PARAMETER [VALUE]="$2" [SIZE]=2;
-#        let $INDEX++;
-#        true
-#      } 
-      let $INDEX++;
-      let $SUBINDEX=0;
+      opkit.set $RCRD_PARAMETER [SIZE]=1;
+      let $INDEX++ $SUBINDEX=0;
     else
-      eval $RCRD_PARAMETER[SIZE]=0;
+      opkit.set $RCRD_PARAMETER [SIZE]=0;
       opkit.match "${C}" $(opkit.get $OK_STATE SETTINGS) && {
         opkit.match "$C" $(opkit.get $OK_STATE HAS_DEFAULT) || return 72;
       } 
@@ -485,16 +459,15 @@ function opkit.parse() {
     opkit.match "${C}" $(opkit.get $OK_STATE SHORT) || return 81;
     let $SUBINDEX++;
     if (( $SUBINDEX == length )); then
-      eval $RCRD_PARAMETER[VALUE]="$2";
-      eval $RCRD_PARAMETER[SIZE]=2;
+      opkit.set $RCRD_PARAMETER [VALUE]="$2";
+      opkit.set $RCRD_PARAMETER [SIZE]=2;
       opkit.match "${C}" $(opkit.get $OK_STATE SETTINGS) && {
         opkit.set $RCRD_PARAMETER [VALUE]="$2" [SIZE]=2;
         let $INDEX++;
       } 
-      let $INDEX++;
-      let $SUBINDEX=0;
+      let $INDEX++ $SUBINDEX=0;
     else
-      eval $RCRD_PARAMETER[SIZE]=0;
+      opkit.set $RCRD_PARAMETER [SIZE]=0;
       opkit.match "${C}" $(opkit.get $OK_STATE SETTINGS) && {
         opkit.match "$C" $(opkit.get $OK_STATE HAS_DEFAULT) || return 82;
       } 
@@ -512,26 +485,22 @@ function opkit.parse() {
     opkit.match "${C}" $(opkit.get $OK_STATE SHORT) || return 91;
     let $SUBINDEX++;
     if (( $SUBINDEX == length )); then
-      eval $RCRD_PARAMETER[VALUE]="${BASH_REMATCH[2]}";
-      eval $RCRD_PARAMETER[SIZE]=1;
+      opkit.set $RCRD_PARAMETER [VALUE]="${BASH_REMATCH[2]}";
+      opkit.set $RCRD_PARAMETER [SIZE]=1;
       opkit.match "${C}" $(opkit.get $OK_STATE SETTINGS) && {
         opkit.set $RCRD_PARAMETER [VALUE]="${!VALUE}";
       } 
-      let $INDEX++;
-      let $SUBINDEX=0;
+      let $INDEX++ $SUBINDEX=0;
     else
-      eval $RCRD_PARAMETER[SIZE]=0;
+      opkit.set $RCRD_PARAMETER [SIZE]=0;
       opkit.match "${C}" $(opkit.get $OK_STATE SETTINGS) && {
         opkit.match "$C" $(opkit.get $OK_STATE HAS_DEFAULT) || return 92;
       } 
     fi;
     return 0;
   }
-  
   return 1;
-
 }
-
 
 OPTIONS="--get-theatre --help -L -Q: -d -e: -f -h -h: -i: -l -p -q: -r -s: -t -t: -z -z:";
 FUNCTIONS="catalog directories files filter key-within-list links names parents read-parameter-pipe  realpaths subset trace write-parameter-pipe";
