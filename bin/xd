@@ -667,7 +667,7 @@ FUNCTIONS
 
  catalog [NUMBER] -- DIRECTORY [...]
  
-   Lists the files in DIRECTOR(IES). If option -d is supplied, it limits the
+   Lists the files in DIRECTOR(IES). If NUMBER is supplied, it limits the
    maximum depth of the search; where 1 means do not traverse any children of
    the DIRECTORY; 2 is children of child DIRECTORY, so on and so forth.
 
