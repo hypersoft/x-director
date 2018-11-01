@@ -687,7 +687,7 @@ FUNCTIONS
  files FILE ...           Lists only the file(s) in FILE(S).
 
  filter [-e] -- MATCH-PATTERN ...
-                
+
   Searches through stdin line records seeking MATCH-PATTERN(S). If MATCH-PATTERN
   is found it is written to stdout unless the -e option has been specified. If
   the -e option has been specified, all matches are excluded from output.
