@@ -291,151 +291,6 @@ function -h() {
   head=\^ call "${@}";
 }
 
-function --help() {
-
-cat <<EOF
-
-$COMMAND [OPTIONS] FUNCTION [...]
-
-General Purpose, Mutliple Record, File and String: Utility
-
- ALL REGULAR EXPRESSIONS, REGULARLY: EXTENDED.
-
-License: MIT
-GitHub: https://github.com/hypersoft/mapkit
-
-(C) 2018; Triston-Jerard: Taylor;
-          Hypersoft-Systems: U.-S.-A.
-
-OPTION FLAGS
-
- --help  Show this help screen
-  -h      Show this help screen.
-
- --get-theatre  Generates a hash-key-list of FUNCTIONS and OPTIONS.
-
- -r  Convert path record(s) to realpath(s).
- -d  Only print existing directories.
- -f  Only print existing files.
- -p  Only print parent directories.
- -l  Only print links.
- -L  Do not print links.
- -n  Only print file names.
- -z  Set Standards Compliant IFS = \$' \t\n'
- -t  Match the tail/type of records. Uses the RX char: \`\$'
- -h  Match the head/heading of records. Uses the RX char: \`^'
-
-OPTION SETTINGS
-
- -t: TEXT     Sets the TAIL of all primary expressions to text.
- -h: TEXT     Sets the HEAD of all primary expressions to TEXT.
-
- -Q: TEXT     Sets the internal expression separator of the subset FUNCTION
-              to TEXT. You may never need this option. The default is \$'\1'.
-              This feature only affects the subset FUNCTION.
-
- -e: FILTER   Perform an exclude match against FILTER(s). Multiple filters may
-              be supplied as a single parameter. The shell will expand the
-              FILTERS according to IFS (see also OPTIONS: \`-z': and \`-z') for
-              control of the shell expansion.
-
- -i: FILTER   Perform an include match against FILTER(s). Works like \`-e:'.
- 
- -q: TEXT     Set regular-expression quoting character to TEXT for internal
-              scripts. The default is \`'".
- 
- -z: TEXT     Sets the IFS variable to TEXT. See your shell manual about IFS.
-
-FUNCTIONS
-
- NOTE: most FUNCTIONS have shortcuts in the OPTIONS section for advanced use.
-
- catalog [-m NUMBER] -- DIRECTORY [...]
- 
-   Lists the files in DIRECTOR(IES). If option -m is supplied, it limits the
-   maximum depth of the search; where 1 means do not traverse any children of
-   the DIRECTORY; 2 is children of child DIRECTORY, so on and so forth.
-
- directories FILE ...     Lists only the directories in FILE(S).
- files FILE ...           Lists only the file(s) in FILE(S).
-
- filter [-e] -- MATCH-PATTERN ...
-                
-  Searches through stdin line records seeking MATCH-PATTERN(S). If MATCH-PATTERN
-  is found it is written to stdout unless the -e option has been specified. If
-  the -e option has been specified, all matches are excluded from output.
-
- names FILE ...           Lists only the name parts of FILE(S).
- parents FILE ...         Lists only the parent-directories of FILE(S).
-
- links [-e] -- FILE ...   Lists only the links in FILE(S). With \`-e', lists
-                          all files which are NOT links. The first FILE cannot
-                          be: \`-e'.
-
- read-pipe-parameters COMMAND or FUNCTION [OPTIONS]
- 
-   Read lines from input and send them as parameters to COMMAND or FUNCTION
-   with any OPTIONS.
-   
-   [FORMERLY: pipe]
-
- write-parameter-pipe  ...  Converts all parameters to line-stream-output.
- 
- trace SOMETHING     Performs a debug trace explaining dependency chain,
-                     backwards AND forwards [quantum-filters ;)].
-                     
- realpaths FILE ...       List only the realpath(s) of FILE(S).
-
- key-within-list VALUES... KEY  
- 
-   Searches through values for key. Returns success if literally found. Ready
-   made for read-pipe-parameters FUNCTION.
-
- subset CUT-PATTERN PASTE-TEXT[ CUT-PATTERN PASTE-TEXT[ ...]]
- 
-   Searches through stdin line records using CUT-PATTERN and replaces matches
-   with PASTE-TEXT. Multiple CUT-PATTERN and PASTE-TEXT expressions may be
-   supplied. Use the write-parameter-pipe FUNCTION if stdio is not convenient.
-
-NOTE:
-
- (1) OPTIONS affect the output of FUNCTIONS.
-
- (2) OPTIONS are executed in REVERSE-ORDER of command specification; except:
-     (1) when an OPTION is not a shortcut to a FUNCTION.
-         (1.a) if the OPTION is not a shortcut to a FUNCTION, it is instantly
-               applied THROUGH the OPTION or FUNCTION following it in the
-               command specification. Which means all environment OPTIONS are
-               immediately effective at the beginning of the command following
-               it; being of the form: [ENVIRONMENT] OPTION OR FUNCTION.
-
-               [see: the function definitions of the OPTIONS in source code
-                     to verify the above form.
-                
-                  file://$(realpath $0)
-               ]
-
-See: "regex - POSIX.2 regular expressions" within the Linux Programmer's Manual
-     for help on expressions with and without the -E OPTION.
-
-END $COMMAND --help ############################################################
-
-$COMMAND [OPTIONS] FUNCTION [...]
-
-General Purpose, Mutliple Record, File and String: Utility
-
-License: MIT
-GitHub: https://github.com/hypersoft/mapkit
-
-                                           (C) 2018; Triston-Jerard: Taylor;
-                                                     Hypersoft-Systems: U.-S.-A.
-
-EOF
-
-exit 1;
-
-}
-
 function trace() {
   DEBUG=1 call "$@";
 }
@@ -727,11 +582,156 @@ function call() {
 
   {
     echo invalid command: "\`$1'";
-    echo type: $COMMAND --help or $COMMAND -h for $COMMAND help;
+    echo "type: $COMMAND --help or $COMMAND -h for $COMMAND help";
     exit 1;
   }  >&2;
   
 }
+
+function --help() {
+
+cat >&2 <<EOF;
+
+$COMMAND [OPTIONS] FUNCTION [...]
+
+General Purpose, Mutliple Record, File and String: Utility
+
+ ALL REGULAR EXPRESSIONS, REGULARLY: EXTENDED.
+
+License: MIT
+GitHub: https://github.com/hypersoft/mapkit
+
+(C) 2018; Triston-Jerard: Taylor;
+          Hypersoft-Systems: U.-S.-A.
+
+OPTION FLAGS
+
+ --help  Show this help screen
+  -h      Show this help screen.
+
+ --get-theatre  Generates a hash-key-list of FUNCTIONS and OPTIONS.
+
+ -r  Convert path record(s) to realpath(s).
+ -d  Only print existing directories.
+ -f  Only print existing files.
+ -p  Only print parent directories.
+ -l  Only print links.
+ -L  Do not print links.
+ -n  Only print file names.
+ -z  Set Standards Compliant IFS = \$' \t\n'
+ -t  Match the tail/type of records. Uses the RX char: \`\$'
+ -h  Match the head/heading of records. Uses the RX char: \`^'
+
+OPTION SETTINGS
+
+ -t: TEXT     Sets the TAIL of all primary expressions to text.
+ -h: TEXT     Sets the HEAD of all primary expressions to TEXT.
+
+ -Q: TEXT     Sets the internal expression separator of the subset FUNCTION
+              to TEXT. You may never need this option. The default is \$'\1'.
+              This feature only affects the subset FUNCTION.
+
+ -e: FILTER   Perform an exclude match against FILTER(s). Multiple filters may
+              be supplied as a single parameter. The shell will expand the
+              FILTERS according to IFS (see also OPTIONS: \`-z': and \`-z') for
+              control of the shell expansion.
+
+ -i: FILTER   Perform an include match against FILTER(s). Works like \`-e:'.
+ 
+ -q: TEXT     Set regular-expression quoting character to TEXT for internal
+              scripts. The default is \`'".
+ 
+ -z: TEXT     Sets the IFS variable to TEXT. See your shell manual about IFS.
+
+FUNCTIONS
+
+ NOTE: most FUNCTIONS have shortcuts in the OPTIONS section for advanced use.
+
+ catalog [-m NUMBER] -- DIRECTORY [...]
+ 
+   Lists the files in DIRECTOR(IES). If option -m is supplied, it limits the
+   maximum depth of the search; where 1 means do not traverse any children of
+   the DIRECTORY; 2 is children of child DIRECTORY, so on and so forth.
+
+ directories FILE ...     Lists only the directories in FILE(S).
+ files FILE ...           Lists only the file(s) in FILE(S).
+
+ filter [-e] -- MATCH-PATTERN ...
+                
+  Searches through stdin line records seeking MATCH-PATTERN(S). If MATCH-PATTERN
+  is found it is written to stdout unless the -e option has been specified. If
+  the -e option has been specified, all matches are excluded from output.
+
+ names FILE ...           Lists only the name parts of FILE(S).
+ parents FILE ...         Lists only the parent-directories of FILE(S).
+
+ links [-e] -- FILE ...   Lists only the links in FILE(S). With \`-e', lists
+                          all files which are NOT links.
+
+ read-pipe-parameters COMMAND or FUNCTION [OPTIONS]
+ 
+   Read lines from input and send them as parameters to COMMAND or FUNCTION
+   with any OPTIONS.
+   
+   [FORMERLY: pipe]
+
+ write-parameter-pipe  ...  Converts all parameters to line-stream-output.
+ 
+ trace SOMETHING     Performs a debug trace explaining dependency chain,
+                     backwards AND forwards [quantum-filters ;)].
+                     
+ realpaths FILE ...       List only the realpath(s) of FILE(S).
+
+ key-within-list VALUES... KEY  
+ 
+   Searches through values for key. Returns success if literally found. Ready
+   made for read-pipe-parameters FUNCTION.
+
+ subset CUT-PATTERN PASTE-TEXT[ CUT-PATTERN PASTE-TEXT[ ...]]
+ 
+   Searches through stdin line records using CUT-PATTERN and replaces matches
+   with PASTE-TEXT. Multiple CUT-PATTERN and PASTE-TEXT expressions may be
+   supplied. Use the write-parameter-pipe FUNCTION if stdio is not convenient.
+
+NOTE:
+
+ (1) OPTIONS affect the output of FUNCTIONS.
+
+ (2) OPTIONS are executed in REVERSE-ORDER of command specification; except:
+     (1) when an OPTION is not a shortcut to a FUNCTION.
+         (1.a) if the OPTION is not a shortcut to a FUNCTION, it is instantly
+               applied THROUGH the OPTION or FUNCTION following it in the
+               command specification. Which means all environment OPTIONS are
+               immediately effective at the beginning of the command following
+               it; being of the form: [ENVIRONMENT] OPTION OR FUNCTION.
+
+               [see: the function definitions of the OPTIONS in source code
+                     to verify the above form.
+                
+                  file://$(realpath $0)
+               ]
+
+See: "regex - POSIX.2 regular expressions" within the Linux Programmer's Manual
+     for help on expressions with and without the -E OPTION.
+
+END $COMMAND --help ############################################################
+
+$COMMAND [OPTIONS] FUNCTION [...]
+
+General Purpose, Mutliple Record, File and String: Utility
+
+License: MIT
+GitHub: https://github.com/hypersoft/mapkit
+
+                                           (C) 2018; Triston-Jerard: Taylor;
+                                                     Hypersoft-Systems: U.-S.-A.
+
+EOF
+
+exit 1;
+
+}
+
 
 trace='' call "$@";
 
