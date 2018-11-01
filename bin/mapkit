@@ -254,10 +254,6 @@ function -p() {
   call "$@" | read-pipe-parameters parents;
 }
 
-function -s() {
-  -s: n "$@";
-}
-
 function -s:() {
   [[ $1 == u ]] && {
     shift;
@@ -536,7 +532,7 @@ function parseopt() {
 
 }
 
-OPTIONS="--get-theatre --help -L -Q: -d -e: -f -h -h: -i: -l -p -q: -r -s -s: -t -t: -z -z:";
+OPTIONS="--get-theatre --help -L -Q: -d -e: -f -h -h: -i: -l -p -q: -r -s: -t -t: -z -z:";
 FUNCTIONS="catalog directories files filter key-within-list links names parents parseopt read-pipe-parameters realpaths subset trace write-parameter-pipe";
 
 (( DEBUG == 1 )) && {
@@ -548,7 +544,7 @@ declare -A CONFIG
 parseopt.set CONFIG [LONG]="get-theatre help"
 parseopt.set CONFIG [SHORT]="t L Q r d e f h i l l p q s z";
 parseopt.set CONFIG [SETTINGS]="h Q t e i l q z s"
-parseopt.set CONFIG [HAS_DEFAULT]="h t z s"
+parseopt.set CONFIG [HAS_DEFAULT]="h t z"
 
 parseopt.begin CONFIG;
 
