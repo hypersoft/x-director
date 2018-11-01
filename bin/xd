@@ -100,8 +100,8 @@ function read-parameter-pipe () {
 
 function catalog() {
 
-  [[ $1 == -d ]] && {
-    local -i max=$2; shift 2;
+  [[ $1 =~ ^[0-9]$ ]] && {
+    local -i max=$1; shift;
   }
 
   [[ "$1" == -- ]] || {
@@ -602,7 +602,7 @@ OPTION FLAGS
 
  Flags may be combined to produce a compound option. For example:
 
-   $COMMAND -rf catalog -d 1 -- .
+   $COMMAND -rf catalog 1 -- .
 
    Lists the real path of files in the current directory.
 
@@ -630,7 +630,7 @@ OPTION SETTINGS
  Settings may be combined with flags as a single parameter, IF: it is the last
  OPTION in the single-parameter-set. For example:
  
-   $COMMAND -ti:\.md -f catalog -d 1 -- .
+   $COMMAND -ti:\.md -f catalog 1 -- .
 
    Lists all .md files in the current directory.
 
@@ -665,7 +665,7 @@ OPTION SETTINGS: EVIRONMENT
 
 FUNCTIONS
 
- catalog [-d NUMBER] -- DIRECTORY [...]
+ catalog [NUMBER] -- DIRECTORY [...]
  
    Lists the files in DIRECTOR(IES). If option -d is supplied, it limits the
    maximum depth of the search; where 1 means do not traverse any children of
