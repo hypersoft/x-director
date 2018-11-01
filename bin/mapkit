@@ -661,7 +661,7 @@ OPTION SETTINGS
               control of the shell expansion.
 
  -i: FILTER   Perform an include match against FILTER(s). Works like \`-e:'.
- 
+
  -s: TYPE     Perform a sort by TYPE; where TYPE is:
 
                u for uniqe sort.
@@ -699,7 +699,7 @@ FUNCTIONS
                           all files which are NOT links.
 
  read-pipe-parameters COMMAND or FUNCTION [OPTIONS]
- 
+
    Read lines from input and send them as parameters to COMMAND or FUNCTION
    with any OPTIONS.
    
