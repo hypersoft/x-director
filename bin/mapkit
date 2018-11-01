@@ -642,18 +642,14 @@ OPTION FLAGS
  -l  Only print links.
  -L  Do not print links.
  -n  Only print file names.
- -z  Set Standards Compliant IFS = \$' \t\n'
- -t  Match the tail/type of records. Uses the RX char: \`\$'
- -h  Match the head/heading of records. Uses the RX char: \`^'
+
+OPTION FLAGS: ENVIRONMENT
+
+  -z  Set Standards Compliant IFS = \$' \t\n'.
+  -t  Match the tail/type of records. Uses the RX char: \`\$'
+  -h  Match the head/heading of records. Uses the RX char: \`^'
 
 OPTION SETTINGS
-
- -t: TEXT     Sets the TAIL of all primary expressions to text.
- -h: TEXT     Sets the HEAD of all primary expressions to TEXT.
-
- -Q: TEXT     Sets the internal expression separator of the subset FUNCTION
-              to TEXT. You may never need this option. The default is \$'\1'.
-              This feature only affects the subset FUNCTION.
 
  -e: FILTER   Perform an exclude match against FILTER(s). Multiple filters may
               be supplied as a single parameter. The shell will expand the
@@ -669,6 +665,15 @@ OPTION SETTINGS
                n for name sort.
                
                [TYPES cannot be combined as a single parameter to \`-s:']
+
+OPTION SETTINGS: EVIRONMENT
+ 
+ -t: TEXT     Sets the TAIL of all primary expressions to text.
+ -h: TEXT     Sets the HEAD of all primary expressions to TEXT.
+
+ -Q: TEXT     Sets the internal expression separator of the subset FUNCTION
+              to TEXT. You may never need this option. The default is \$'\1'.
+              This feature only affects the subset FUNCTION.
 
  -q: TEXT     Set regular-expression quoting character to TEXT for internal
               scripts. The default is \`'".
