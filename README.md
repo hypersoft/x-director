@@ -1,7 +1,7 @@
 # mapkit
 General Purpose, Mutliple Record, File and String: Utility
 
- ALL EXPRESSIONS, REGULARLY: EXTENDED.
+    ALL EXPRESSIONS, REGULARLY: EXTENDED.
 
 HELP:
 ```sh
