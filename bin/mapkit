@@ -594,7 +594,7 @@ function call() {
 
 function --help() {
 
-cat >&2 <<EOF;
+cat <<EOF
 
 $COMMAND [OPTIONS] FUNCTION [...]
 
@@ -735,7 +735,7 @@ EOF
 
 exit 1;
 
-}
+} >&2;
 
 
 trace='' call "$@";
@@ -746,4 +746,4 @@ TODO:
     
   help section about regular: regular expressions -- lol and extended regular
   expressions.
-  
+
