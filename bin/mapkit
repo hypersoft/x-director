@@ -240,8 +240,8 @@ function -O:() {
 
 function dump.function.table() {
   local all="$(env -i DEBUG=1 $0 declare -pF | flags='-v' pipe filter '\.' | cut -d ' ' -f3)"
-  echo OPTIONS=\"$(filter "$all" '^-')\"\;;
-  echo FUNCTIONS=\"$(filter "$all" -e '^-' '^call$')\"\;;
+  echo OPTIONS=\"$(filter "$all" '^-')\";
+  echo FUNCTIONS=\"$(filter "$all" -e '^-' '^call$')\";
 }
 
 function --get-theatre() {
