@@ -254,6 +254,10 @@ function -p() {
   call "$@" | read-pipe-parameters parents;
 }
 
+function -u() {
+  call "$@" | uniq;
+}
+
 function -q:() {
   quote=$1 call "${@:2}";
 }
@@ -512,8 +516,8 @@ function parseopt() {
 
 }
 
-OPTIONS="--get-theatre --help -L -Q: -r -d -e: -f -h -h: -i: -l -p -q: -t -t: -z -z:"
-FUNCTIONS="catalog directories files filter key-within-list links names parents parseopt read-pipe-parameters realpaths subset trace write-parameter-pipe"
+OPTIONS="--get-theatre --help -L -Q: -d -e: -f -h -h: -i: -l -p -q: -r -t -t: -u -z -z:";
+FUNCTIONS="catalog directories files filter key-within-list links names parents parseopt read-pipe-parameters realpaths subset trace write-parameter-pipe";
 
 (( DEBUG == 1 )) && {
   DEBUG_FUNCTIONS="declare dump.function.table filter.script subset.script";
@@ -522,7 +526,7 @@ FUNCTIONS="catalog directories files filter key-within-list links names parents 
 declare -A CONFIG
 
 parseopt.set CONFIG [LONG]="get-theatre help"
-parseopt.set CONFIG [SHORT]="t L Q r d e f h i l l p q z";
+parseopt.set CONFIG [SHORT]="t L Q r d e f h i l l p q u z";
 parseopt.set CONFIG [SETTINGS]="h Q t e i l q z"
 parseopt.set CONFIG [HAS_DEFAULT]="h t z"
 
@@ -620,6 +624,7 @@ OPTION FLAGS
  -n  Only print file names.
  -z  Set Standards Compliant IFS = \$' \t\n'
  -t  Match the tail/type of records. Uses the RX char: \`\$'
+ -u  Only print unique records.
  -h  Match the head/heading of records. Uses the RX char: \`^'
 
 OPTION SETTINGS
@@ -637,10 +642,10 @@ OPTION SETTINGS
               control of the shell expansion.
 
  -i: FILTER   Perform an include match against FILTER(s). Works like \`-e:'.
- 
+
  -q: TEXT     Set regular-expression quoting character to TEXT for internal
               scripts. The default is \`'".
- 
+
  -z: TEXT     Sets the IFS variable to TEXT. See your shell manual about IFS.
 
 FUNCTIONS
