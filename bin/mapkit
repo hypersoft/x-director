@@ -238,7 +238,7 @@ function -z:() { # sets IFS: PARAMETER
   IFS=$1 call "${@:2}";
 }
 
-function -R() {
+function -r() {
   call "$@" | read-pipe-parameters realpaths;
 }
 
@@ -314,7 +314,7 @@ OPTION FLAGS
 
  --get-theatre  Generates a hash-key-list of FUNCTIONS and OPTIONS.
 
- -R  Convert path record(s) to realpath(s).
+ -r  Convert path record(s) to realpath(s).
  -d  Only print existing directories.
  -f  Only print existing files.
  -p  Only print parent directories.
@@ -657,7 +657,7 @@ function parseopt() {
 
 }
 
-OPTIONS="--get-theatre --help -L -Q: -R -d -e: -f -h -h: -i: -l -p -q: -t -t: -z -z:"
+OPTIONS="--get-theatre --help -L -Q: -r -d -e: -f -h -h: -i: -l -p -q: -t -t: -z -z:"
 FUNCTIONS="catalog directories files filter key-within-list links names parents parseopt read-pipe-parameters realpaths subset trace write-parameter-pipe"
 
 (( DEBUG == 1 )) && {
@@ -667,7 +667,7 @@ FUNCTIONS="catalog directories files filter key-within-list links names parents 
 declare -A CONFIG
 
 parseopt.set CONFIG [LONG]="get-theatre help"
-parseopt.set CONFIG [SHORT]="t L Q R d e f h i l l p q z";
+parseopt.set CONFIG [SHORT]="t L Q r d e f h i l l p q z";
 parseopt.set CONFIG [SETTINGS]="h Q t e i l q z"
 parseopt.set CONFIG [HAS_DEFAULT]="h t z"
 
