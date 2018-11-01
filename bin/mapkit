@@ -506,7 +506,7 @@ function parseopt() {
     local match=${BASH_REMATCH[1]};
     local -i length=${#match};
     local C=${match:${!SUBINDEX}:1};
-    parseopt.set $RCRD_PARAMETER [BRANCH]=1 \
+    parseopt.set $RCRD_PARAMETER [BRANCH]=9 \
       [PARAMETER]="$C" [INDEX]=${!INDEX} \
         [SUBINDEX]=${!SUBINDEX} [VALUE]="" [SHORT]=1;
     parseopt.match "${C}" $(parseopt.get $PO_STATE SHORT) || return 91;
@@ -780,7 +780,6 @@ EOF
 exit 1;
 
 } >&2;
-
 
 trace='' call "$@";
 
