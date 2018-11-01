@@ -203,15 +203,15 @@ function directories() {
 }
 
 function key-within-list() { # make sure you test this result in error-mode-shells
-  # suitable with pipe's default to-program-input format.  
-  local key="${@:$#:1}";
-  set -- "${@:0:$#}";
-  for item; do
-   [[ "$item" == "$key" ]] && {
-     return 0;
-   }
-  done
-  return 1;
+  local key="$1"; shift;
+  [[ "$1" == -- ]] || {
+    echo
+    echo "$COMMAND: ${FUNCNAME[1]}: error: match specifications must be preceded by \`--' for disambiguation of matches and match options"
+    echo
+    exit 1;
+  } >&2;
+  shift;
+  opkit.match "$key" "$@"; 
 }
 
 function -e:() { # runs exclusive filter; matches should be seprated by IFS[0-2]
@@ -577,10 +577,10 @@ function call() {
   local name trace=${trace}
   [[ "$1" != trace ]] && trace+=" <- $1";
   [[ $DEBUG == 1 ]] && {  
-    key-within-list $(echo $FUNCTIONS) "$1" && dump.trace
+    key-within-list "$1" -- $(echo $FUNCTIONS) && dump.trace
   }  >&2;
 
-  key-within-list $OPTIONS $FUNCTIONS $DEBUG_FUNCTIONS "$1" && { 
+  key-within-list "$1" -- $OPTIONS $FUNCTIONS $DEBUG_FUNCTIONS && { 
     "$@"; exit $?; 
   };
   
@@ -729,7 +729,7 @@ FUNCTIONS
                      
  realpaths FILE ...       List only the realpath(s) of FILE(S).
 
- key-within-list VALUES... KEY  
+ key-within-list KEY -- VALUES ...
 
    Searches through values for key. Returns success if literally found. Ready
    made for read-parameter-pipe  FUNCTION.
