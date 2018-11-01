@@ -12,15 +12,6 @@ function subset.script() {
 
   local head=${head:-''} tail=${tail:-''} split=${split:-$'\1'} quote=${quote:-"'"} flags=-E;
 
-  [[ "$1" == -- ]] || {
-    echo
-    echo "$COMMAND: ${FUNCNAME[1]}: error: pattern and replacement specifications must be preceded by \`--' for disambiguation of operations and options"
-    echo
-    exit 1;
-  } >&2;
-  
-  shift;
-
   # the following parameters are paired in twos:
   # $1 find-pattern, $2 replacement[, ...]
   # this format allows you to perform successive substitutions in a reliable way.
@@ -29,7 +20,7 @@ function subset.script() {
     echo
     echo $COMMAND: ${FUNCNAME[1]}: error: $BAD_SUBST_PARAMS: an invalid number of substitution specifications were provided.
     echo
-    echo $'\t'try: $COMMAND ${FUNCNAME[1]} -- MATCH-PATTERN REPLACEMENT-TEXT[, MATCH-PATTERN REPLACEMENT-TEXT[, ...]]
+    echo $'\t'try: $COMMAND ${FUNCNAME[1]} CUT-PATTERN PASTE-TEXT[, CUT-PATTERN PASTE-TEXT[, ...]]
     echo
     exit 1;
   } >&2;
@@ -63,15 +54,15 @@ function filter.script() {
     
 }
 
-function subset() { # [OPTIONS] FIND REPLACE ...
+function subset() {
 
   local content=
 
   (( $# == 0 )) && {
     echo
-    echo "$COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: 0 parameters were provided"
+    echo "$COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS; 0 parameters were provided"
     echo
-    echo $'\t'try: $COMMAND $FUNCNAME [OPTIONS] -- MATCH-PATTERN REPLACEMENT-TEXT[ MATCH-PATTERN REPLACEMENT-TEXT[ ...]]
+    echo $'\t'try: $COMMAND $FUNCNAME CUT-PATTERN PASTE-TEXT[ CUT-PATTERN PASTE-TEXT[ ...]]
     echo
     exit 1;
   } >&2;
@@ -86,7 +77,7 @@ function filter() {
 
   (( $# == 0 )) && {
     echo
-    echo "$COMMAND: $FUNCNAME: error: $BAD_FILTER_PARAMS: 0 parameters were provided"
+    echo "$COMMAND: $FUNCNAME: error: $BAD_FILTER_PARAMS; 0 parameters were provided"
     echo
     echo $'\t'try: $COMMAND $FUNCNAME [OPTIONS] -- MATCH-PATTERN ...
     echo
@@ -109,13 +100,15 @@ function read-pipe-parameters() {
 
 function catalog() {
 
-  [[ $1 == --depth ]] && {
+  [[ $1 == -m ]] && {
     local -i max=$2; shift 2;
   }
 
   [[ "$1" == -- ]] || {
     echo
     echo "$COMMAND: ${FUNCNAME}: error: directory names must be preceeded by \`--' for disambiguation of options and files"
+    echo
+    echo $'\t'try: $COMMAND ${FUNCNAME} [-m NUMBER] -- DIRECTORY ...
     echo
     exit 1;
   } >&2;
@@ -176,6 +169,8 @@ function links() {
   [[ "$1" == -- ]] || {
     echo
     echo "$COMMAND: ${FUNCNAME}: error: file specifications must be preceded by \`--' for disambiguation of files and options"
+    echo
+    echo $'\t'try: $COMMAND ${FUNCNAME[1]} [-e] -- FILE ...
     echo
     exit 1;
   } >&2;
@@ -304,6 +299,8 @@ $COMMAND [OPTIONS] FUNCTION [...]
 
 General Purpose, Mutliple Record, File and String: Utility
 
+ ALL REGULAR EXPRESSIONS, REGULARLY: EXTENDED.
+
 License: MIT
 GitHub: https://github.com/hypersoft/mapkit
 
@@ -313,7 +310,7 @@ GitHub: https://github.com/hypersoft/mapkit
 OPTION FLAGS
 
  --help  Show this help screen
- -h      Show this help screen.
+  -h      Show this help screen.
 
  --get-theatre  Generates a hash-key-list of FUNCTIONS and OPTIONS.
 
@@ -353,22 +350,25 @@ FUNCTIONS
 
  NOTE: most FUNCTIONS have shortcuts in the OPTIONS section for advanced use.
 
- catalog DIRECTORY [...]  Lists the files in directories.
+ catalog [-m NUMBER] -- DIRECTORY [...]
+ 
+   Lists the files in DIRECTOR(IES). If option -m is supplied, it limits the
+   maximum depth of the search; where 1 means do not traverse any children of
+   the DIRECTORY; 2 is children of child DIRECTORY, so on and so forth.
+
  directories FILE ...     Lists only the directories in FILE(S).
  files FILE ...           Lists only the file(s) in FILE(S).
 
- filter DATA [-e] FIND-PATTERN ...
+ filter [-e] -- MATCH-PATTERN ...
                 
-  Finds FIND-PATTERN in the input records, and excludes or includes the record.
-  the default operation is include. use option \`-e' to exclude. Using \`-e'
-  with this FUNCTION is different than using OPTION \`-e:'. Using \`-e' 
-  with this FUNCTION does not require multiple filters as a single argument.
-  The first FIND-PATTERN cannot be: \`-e'.
+  Searches through stdin line records seeking MATCH-PATTERN(S). If MATCH-PATTERN
+  is found it is written to stdout unless the -e option has been specified. If
+  the -e option has been specified, all matches are excluded from output.
 
  names FILE ...           Lists only the name parts of FILE(S).
  parents FILE ...         Lists only the parent-directories of FILE(S).
 
- links [-e] FILE ...      Lists only the links in FILE(S). With \`-e', lists
+ links [-e] -- FILE ...   Lists only the links in FILE(S). With \`-e', lists
                           all files which are NOT links. The first FILE cannot
                           be: \`-e'.
 
@@ -391,10 +391,11 @@ FUNCTIONS
    Searches through values for key. Returns success if literally found. Ready
    made for read-pipe-parameters FUNCTION.
 
- subset DATA FIND-PATTERN REPLACE-TEXT ...
+ subset CUT-PATTERN PASTE-TEXT[ CUT-PATTERN PASTE-TEXT[ ...]]
  
-   Searches through DATA using FIND-PATTERN and replaces matches with REPLACE-
-   TEXT. Multiple FIND-PATTERN and REPLACE-TEXT expressions may be supplied.
+   Searches through stdin line records using CUT-PATTERN and replaces matches
+   with PASTE-TEXT. Multiple CUT-PATTERN and PASTE-TEXT expressions may be
+   supplied. Use the write-parameter-pipe FUNCTION if stdio is not convenient.
 
 NOTE:
 
