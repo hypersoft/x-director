@@ -11,3 +11,7 @@ bin/mapkit --help
 \> "Are they regular or irregular"?
 
 \< "I don't know, I think they are extended".
+
+"Having two kinds of REs is a botch."
+-- kernel.org (`man 7 regex`;)
+

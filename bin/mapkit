@@ -378,6 +378,10 @@ NOTE:
 
 END $COMMAND --help ############################################################
 
+See: \`regex - POSIX.2 regular expressions' within the Linux Programmer's Manual
+     REGEX(7): \`man 7 regex\` for help on expressions with and without the -E
+     OPTION.
+
 $COMMAND [OPTIONS] FUNCTION [...]
 
 General Purpose, Mutliple Record, File and String: Utility
