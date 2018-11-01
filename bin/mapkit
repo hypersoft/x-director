@@ -669,7 +669,7 @@ declare -A CONFIG
 parseopt.set CONFIG [LONG]="get-theatre help"
 parseopt.set CONFIG [SHORT]="t L Q R d e f h i l l p q z";
 parseopt.set CONFIG [SETTINGS]="h Q t e i l q z"
-parseopt.set CONFIG [HAS_DEFAULT]="h t"
+parseopt.set CONFIG [HAS_DEFAULT]="h t z"
 
 parseopt.begin CONFIG;
 
