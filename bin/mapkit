@@ -731,7 +731,7 @@ FUNCTIONS
 
  key-within-list KEY -- VALUE ...
 
-   Searches through VALUE(S) for key. Returns success if literally found. Ready
+   Searches through VALUE(S) for KEY. Returns success if literally found. Ready
    made for read-parameter-pipe  FUNCTION.
 
  subset CUT-PATTERN PASTE-TEXT[ CUT-PATTERN PASTE-TEXT[ ...]]
