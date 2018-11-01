@@ -660,10 +660,9 @@ OPTION SETTINGS
  Settings may be combined with flags as a single parameter, IF: it is the last
  OPTION in the single-parameter-set. For example:
  
-   $COMMAND -tfe: md catalog -d 1 -- .
+   $COMMAND -ti:\.md -f catalog -d 1 -- .
 
-   Lists all files in the current directory except files ending with the letters
-   \`md'.
+   Lists all files .md files in the current directory.
 
  -e: FILTER   Perform an exclude match against FILTER(s). Multiple filters may
               be supplied as a single parameter. The shell will expand the
