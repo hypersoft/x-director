@@ -254,8 +254,28 @@ function -p() {
   call "$@" | read-pipe-parameters parents;
 }
 
-function -u() {
-  call "$@" | uniq;
+function -s() {
+  -s: n "$@";
+}
+
+function -s:() {
+  [[ $1 == u ]] && {
+    shift;
+    call "$@" | uniq;
+    return;
+  }
+  [[ $1 == v ]] && {
+    shift;
+    call "$@" | sort -V;
+    return;
+  }
+  [[ $1 == n ]] && {
+    shift;
+    call "$@" | sort;
+    return;
+  }
+  echo "$COMMAND: error: no sorting solution found for: $1";
+  exit 1;
 }
 
 function -q:() {
@@ -516,7 +536,7 @@ function parseopt() {
 
 }
 
-OPTIONS="--get-theatre --help -L -Q: -d -e: -f -h -h: -i: -l -p -q: -r -t -t: -u -z -z:";
+OPTIONS="--get-theatre --help -L -Q: -d -e: -f -h -h: -i: -l -p -q: -r -s -s: -t -t: -z -z:";
 FUNCTIONS="catalog directories files filter key-within-list links names parents parseopt read-pipe-parameters realpaths subset trace write-parameter-pipe";
 
 (( DEBUG == 1 )) && {
@@ -526,9 +546,9 @@ FUNCTIONS="catalog directories files filter key-within-list links names parents 
 declare -A CONFIG
 
 parseopt.set CONFIG [LONG]="get-theatre help"
-parseopt.set CONFIG [SHORT]="t L Q r d e f h i l l p q u z";
-parseopt.set CONFIG [SETTINGS]="h Q t e i l q z"
-parseopt.set CONFIG [HAS_DEFAULT]="h t z"
+parseopt.set CONFIG [SHORT]="t L Q r d e f h i l l p q s z";
+parseopt.set CONFIG [SETTINGS]="h Q t e i l q z s"
+parseopt.set CONFIG [HAS_DEFAULT]="h t z s"
 
 parseopt.begin CONFIG;
 
@@ -576,13 +596,17 @@ function call() {
     exit $code;
   }
   
-  (( parse[BRANCH] > 6 )) && {
+  (( parse[BRANCH] > 5 )) && {
     local cmd="-${parse[PARAMETER]}";
     (( parse[SIZE] == 2 )) && cmd+=":";
-    $cmd -${parse[INPUT]:2} "${@:2}"; exit $?;
+    if [[ -n "${parse[VALUE]}" ]]; then
+      $cmd: "${parse[VALUE]}" "${@:2}"; exit $?;    
+    else
+      $cmd -${parse[INPUT]:2} "${@:2}"; exit $?;
+    fi;
   }
   
-  #parseopt.dump parse;
+  parseopt.dump parse;
 
   {
     echo invalid command: "\`$1'";
@@ -624,7 +648,6 @@ OPTION FLAGS
  -n  Only print file names.
  -z  Set Standards Compliant IFS = \$' \t\n'
  -t  Match the tail/type of records. Uses the RX char: \`\$'
- -u  Only print unique records.
  -h  Match the head/heading of records. Uses the RX char: \`^'
 
 OPTION SETTINGS
@@ -642,6 +665,14 @@ OPTION SETTINGS
               control of the shell expansion.
 
  -i: FILTER   Perform an include match against FILTER(s). Works like \`-e:'.
+ 
+ -s: TYPE     Perform a sort by TYPE; where TYPE is:
+
+               u for uniqe sort.
+               v for version sort.
+               n for name sort.
+               
+               [TYPES cannot be combined as a single parameter to \`-s:']
 
  -q: TEXT     Set regular-expression quoting character to TEXT for internal
               scripts. The default is \`'".
