@@ -677,8 +677,6 @@ OPTION SETTINGS
 
 FUNCTIONS
 
- NOTE: most FUNCTIONS have shortcuts in the OPTIONS section for advanced use.
-
  catalog [-m NUMBER] -- DIRECTORY [...]
  
    Lists the files in DIRECTOR(IES). If option -m is supplied, it limits the
