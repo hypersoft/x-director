@@ -632,7 +632,7 @@ OPTION SETTINGS
  
    $COMMAND -ti:\.md -f catalog -d 1 -- .
 
-   Lists all files .md files in the current directory.
+   Lists all .md files in the current directory.
 
  -e: FILTER   Perform an exclude match against FILTER(s). Multiple filters may
               be supplied as a single parameter. The shell will expand the
