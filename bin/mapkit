@@ -602,7 +602,7 @@ function call() {
     fi;
   }
   
-  parseopt.dump parse;
+  (( DEBUG )) && parseopt.dump parse;
 
   {
     echo invalid command: "\`$1'";
