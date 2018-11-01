@@ -100,7 +100,7 @@ function read-pipe-parameters() {
 
 function catalog() {
 
-  [[ $1 == -m ]] && {
+  [[ $1 == -d ]] && {
     local -i max=$2; shift 2;
   }
 
@@ -108,7 +108,7 @@ function catalog() {
     echo
     echo "$COMMAND: ${FUNCNAME}: error: directory names must be preceeded by \`--' for disambiguation of options and files"
     echo
-    echo $'\t'try: $COMMAND ${FUNCNAME} [-m NUMBER] -- DIRECTORY ...
+    echo $'\t'try: $COMMAND ${FUNCNAME} [-d NUMBER] -- DIRECTORY ...
     echo
     exit 1;
   } >&2;
@@ -630,6 +630,12 @@ GitHub: https://github.com/hypersoft/mapkit
 
 OPTION FLAGS
 
+ Flags may be combined to produce a compound option. For example:
+
+   $COMMAND -rf catalog -d 1 -- .
+
+   Lists the real path of files in the current directory.
+
  --help  Show this help screen
   -h      Show this help screen.
 
@@ -650,6 +656,14 @@ OPTION FLAGS: ENVIRONMENT
   -h  Match the head/heading of records. Uses the RX char: \`^'
 
 OPTION SETTINGS
+
+ Settings may be combined with flags as a single parameter, IF: it is the last
+ OPTION in the single-parameter-set. For example:
+ 
+   $COMMAND -tfe: md catalog -d 1 -- .
+
+   Lists all files in the current directory except files ending with the letters
+   \`md'.
 
  -e: FILTER   Perform an exclude match against FILTER(s). Multiple filters may
               be supplied as a single parameter. The shell will expand the
@@ -682,9 +696,9 @@ OPTION SETTINGS: EVIRONMENT
 
 FUNCTIONS
 
- catalog [-m NUMBER] -- DIRECTORY [...]
+ catalog [-d NUMBER] -- DIRECTORY [...]
  
-   Lists the files in DIRECTOR(IES). If option -m is supplied, it limits the
+   Lists the files in DIRECTOR(IES). If option -d is supplied, it limits the
    maximum depth of the search; where 1 means do not traverse any children of
    the DIRECTORY; 2 is children of child DIRECTORY, so on and so forth.
 
@@ -711,19 +725,19 @@ FUNCTIONS
    [FORMERLY: pipe]
 
  write-parameter-pipe  ...  Converts all parameters to line-stream-output.
- 
+
  trace SOMETHING     Performs a debug trace explaining dependency chain,
                      backwards AND forwards [quantum-filters ;)].
                      
  realpaths FILE ...       List only the realpath(s) of FILE(S).
 
  key-within-list VALUES... KEY  
- 
+
    Searches through values for key. Returns success if literally found. Ready
    made for read-pipe-parameters FUNCTION.
 
  subset CUT-PATTERN PASTE-TEXT[ CUT-PATTERN PASTE-TEXT[ ...]]
- 
+
    Searches through stdin line records using CUT-PATTERN and replaces matches
    with PASTE-TEXT. Multiple CUT-PATTERN and PASTE-TEXT expressions may be
    supplied. Use the write-parameter-pipe FUNCTION if stdio is not convenient.
