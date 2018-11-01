@@ -12,6 +12,7 @@ bin/mapkit --help
 
 \< "I don't know, I think they are extended".
 
-"Having two kinds of REs is a botch."
--- kernel.org (`man 7 regex`;)
+--------------------------------------------------------------------------------
+
+"Having two kinds of REs is a botch." -- kernel.org (`man 7 regex`)
 
