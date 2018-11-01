@@ -5,79 +5,125 @@ set -e;
 IFS=$' \t\n'; # do no dummy stuff
 
 COMMAND=$(basename $0); # smart stuff is ok
-BAD_SUBST_PARAMS="wrong number of parameters: expected pattern and replacement parameter pairs following data"
+
+BAD_SUBST_PARAMS="wrong number of parameters; expected pattern and replacement parameter-pairs following options"
 
 function subset.script() {
 
-  local head=${head:-''} tail=${tail:-''} split=${split:-$'\1'} quote=${quote:-"'"};
+  local head=${head:-''} tail=${tail:-''} split=${split:-$'\1'} quote=${quote:-"'"} flags=-E;
 
-  (( $# % 2 || $# == 0 )) && {
+  [[ "$1" == -- ]] || {
     echo
-    echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: an invalid number of substitution specifications were provided.
-    echo
-    echo $'\t'try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT[, MATCH-PATTERN REPLACEMENT-TEXT[, ...]]
+    echo "$COMMAND: ${FUNCNAME[1]}: error: pattern and replacement specifications must be preceded by \`--' for disambiguation of operations and options"
     echo
     exit 1;
   } >&2;
-  echo -n sed $flags;
-  while (( $# )); do printf " -e ${quote}s%sg${quote}" "${split}${head}${1}${tail}${split}${2}${split}"; shift 2; done;
-  echo ';'
-}
-
-function pipe() {
-  local pre= cmd=$1; shift;
-  [[ "$cmd" == links && $1 == -e ]] && {
-    pre=-e; shift;
-  }
-  [[ "$cmd" == filter  || $cmd == subset ]] && {
-    $cmd "$(</dev/stdin)" "${@}";
-    return;
-  }
-  $cmd $pre $(</dev/stdin) "${@}";
-}
-
-function subset() {
-
-  (( $# == 0 )) && {
-    echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: 0 parameters were provided.
-    echo try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT
-    exit 1;
-  } >&2;
-
-  local content="$1"; shift;
-
-  [[ "$content" =~ ^$ ]] && {
-    echo $COMMAND: $FUNCNAME: error: no data was given\; aborting
-    exit 1;
-  } >&2;
+  
+  shift;
 
   # the following parameters are paired in twos:
   # $1 find-pattern, $2 replacement[, ...]
   # this format allows you to perform successive substitutions in a reliable way.
 
-  (( $# % 2 )) && {
-    echo $COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: an odd number of substitution specifications were provided.
-    echo try: $COMMAND $FUNCNAME \"DATA-INPUT\" MATCH-PATTERN REPLACEMENT-TEXT[, MATCH-PATTERN REPLACEMENT-TEXT[, ...]]
+  (( $# % 2 || $# == 0 )) && {
+    echo
+    echo $COMMAND: ${FUNCNAME[1]}: error: $BAD_SUBST_PARAMS: an invalid number of substitution specifications were provided.
+    echo
+    echo $'\t'try: $COMMAND ${FUNCNAME[1]} -- MATCH-PATTERN REPLACEMENT-TEXT[, MATCH-PATTERN REPLACEMENT-TEXT[, ...]]
+    echo
     exit 1;
   } >&2;
-  source <(subset.script "$@") < <(printf "%s\n" "$content");
+
+  echo -n sed $flags;
+  while (( $# )); do printf " -e ${quote}s%sg${quote}" "${split}${head}${1}${tail}${split}${2}${split}"; shift 2; done;
+  echo ';'
+
 }
 
 function filter.script() {
-    local head=${head:-''} tail=${tail:-''} quote=${quote:-"'"};
-    [[ "$1" == -e ]] && local flags+=' -v';
-    echo -n grep $flags; 
+
+    local head=${head:-''} tail=${tail:-''} quote=${quote:-"'"} flags=-E;
+
+    [[ "$1" == -e ]] && { # for invert match == '-e[xclude]'
+      flags+=" -v"; shift;
+    }
+
+    [[ "$1" == -- ]] || {
+      echo
+      echo "$COMMAND: ${FUNCNAME[1]}: error: match specifications must be preceded by \`--' for disambiguation of matches and match options"
+      echo
+      exit 1;
+    } >&2;
+    
+    shift;
+    
+    echo -n grep $flags;
     while (( $# )); do printf " -e ${quote}${head}%s${tail}${quote}" "$1"; shift; done; 
-    echo ';';  
+    echo ';';
+    
 }
 
+function subset() { # [OPTIONS] FIND REPLACE ...
+
+  local content=
+
+  (( $# == 0 )) && {
+    echo
+    echo "$COMMAND: $FUNCNAME: error: $BAD_SUBST_PARAMS: 0 parameters were provided"
+    echo
+    echo $'\t'try: $COMMAND $FUNCNAME [OPTIONS] -- MATCH-PATTERN REPLACEMENT-TEXT[ MATCH-PATTERN REPLACEMENT-TEXT[ ...]]
+    echo
+    exit 1;
+  } >&2;
+
+  source <(subset.script "$@");
+
+}
+
+BAD_FILTER_PARAMS="wrong number of parameters; expected pattern-match(es) following options"
+
 function filter() {
-  local content="$1"; shift;
-  source <(filter.script "$@") < <(printf "%s\n" "$content");
+
+  (( $# == 0 )) && {
+    echo
+    echo "$COMMAND: $FUNCNAME: error: $BAD_FILTER_PARAMS: 0 parameters were provided"
+    echo
+    echo $'\t'try: $COMMAND $FUNCNAME [OPTIONS] -- MATCH-PATTERN ...
+    echo
+    exit 1;
+  } >&2;
+
+  source <(filter.script "$@");
+
+}
+
+function write-parameter-pipe () {
+  printf "%s\n" "$@";
+}
+
+function read-pipe-parameters() {
+  local lines;
+  readarray lines;
+  "$@" "${lines[@]%$'\n'}";
 }
 
 function catalog() {
+
+  [[ $1 == --depth ]] && {
+    local -i max=$2; shift 2;
+  }
+
+  [[ "$1" == -- ]] || {
+    echo
+    echo "$COMMAND: ${FUNCNAME}: error: directory names must be preceeded by \`--' for disambiguation of options and files"
+    echo
+    exit 1;
+  } >&2;
+
+  shift;
+
   local dir= file=
+
   if [[ "$d" == '' ]]; then local -i d=0; fi;
   d=$d+1;
   (( max > 0 && d > max )) && return;      
@@ -86,12 +132,13 @@ function catalog() {
       [ -e "$file" ] || [ -L "$file" ] || continue
       if [ -d "$file" ]; then
         printf "%s\n" "$file"
-        catalog "$file"
+        catalog -- "$file"
       else
         printf "%s\n" "$file"
       fi
     done
   done;
+  
 }
 
 function realpaths() {
@@ -121,18 +168,36 @@ function files() {
 }
 
 function links() {
-  [[ $1 == -e ]] && {
-    shift;
+
+  local -i include=1;
+  
+  [[ "$1" == -e ]] && { include=0; shift; }
+  
+  [[ "$1" == -- ]] || {
+    echo
+    echo "$COMMAND: ${FUNCNAME}: error: file specifications must be preceded by \`--' for disambiguation of files and options"
+    echo
+    exit 1;
+  } >&2;
+  
+  shift;
+  
+  (( include )) && {
     for file; do
-      if [[ -h "$file" ]]; then continue; fi;
-      echo $file;
+      if [[ -h "$file" ]]; then 
+        echo "$file";
+      fi;
     done;
     return 0;
   }
+  
   for file; do
-    if [[ -h "$file" ]]; then echo $file; fi;
+    if [[ -h "$file" ]]; then continue; fi;
+    echo "$file";
   done;
-  true;
+  
+  return 0;
+  
 }
 
 function directories() {
@@ -155,23 +220,19 @@ function key-within-list() { # make sure you test this result in error-mode-shel
 }
 
 function -e:() { # runs exclusive filter; matches should be seprated by IFS[0-2]
-  call "${@:2}" | flags+=' -v' pipe filter $1;
+  call "${@:2}" | filter -e -- $1;
 }
 
 function -i:() { # runs inclusive regular expression filter; matches should be seprated by IFS[0-2]
-  call "${@:2}" | pipe filter $1;
-}
-
-function -l:() { # catalog depth limit
-  max=$1 call "${@:2}";
+  call "${@:2}" | filter -- $1;
 }
 
 function -f() { # filters content by existing files
-  call "$@" | pipe files;
+  call "$@" | read-pipe-parameters files;
 }
 
 function -d() { # filters content by existing directories
-  call "$@" | pipe directories;
+  call "$@" | read-pipe-parameters directories;
 }
 
 function -z() { # reset IFS
@@ -182,24 +243,20 @@ function -z:() { # sets IFS: PARAMETER
   IFS=$1 call "${@:2}";
 }
 
-function -E() { # extended regular expressions - lol
-  flags='-E' call "$@";
-}
-
 function -R() {
-  call "$@" | pipe realpaths;
+  call "$@" | read-pipe-parameters realpaths;
 }
 
 function -l() {
-  call "$@" | pipe links;
+  call "$@" | read-pipe-parameters links --;
 }
 
 function -L() {
-  call "$@" | pipe links -e;
+  call "$@" | read-pipe-parameters links -e --;
 }
 
 function -p() {
-  call "$@" | pipe parents;
+  call "$@" | read-pipe-parameters parents;
 }
 
 function -q:() {
@@ -210,38 +267,22 @@ function -Q:() { # this option only affects subset
   split=$1 call "${@:2}";
 }
 
-function -TH() {
-  tail=\$ head=\^ call "$@";
-}
-
-function -HT() {
-  tail=\$ head=\^ call "$@";
-}
-
-function -T() {
+function -t() {
   tail=\$ call "${@}";
 }
 
-function -T:() {
+function -t:() {
   tail=$1 call "${@:2}";
 }
 
-function -H() {
-  head=\^ call "${@}";
-}
-
-function -H:() {
+function -h:() {
   head=$1 call "${@:2}";
 }
 
-function -O:() {
-  flags=$1 call "${@:2}";
-}
-
 function dump.function.table() {
-  local all="$(env -i DEBUG=1 $0 declare -pF | flags='-v' pipe filter '\.' | cut -d ' ' -f3)"
-  echo OPTIONS=\"$(filter "$all" '^-')\";
-  echo FUNCTIONS=\"$(filter "$all" -e '^-' '^call$')\";
+  local all="$(env -i DEBUG=1 $0 declare -pF | filter -e -- '\.' | cut -d ' ' -f3)"
+  echo OPTIONS=\"$(write-parameter-pipe  "$all" | filter -- '^-')\";
+  echo FUNCTIONS=\"$(write-parameter-pipe  "$all" | filter -e -- '^-' '^call$')\";
 }
 
 function --get-theatre() {
@@ -249,7 +290,10 @@ function --get-theatre() {
 }
 
 function -h() {
-  --help "$@";
+  (( $# == 0 )) && {
+    --help
+  }
+  head=\^ call "${@}";
 }
 
 function --help() {
@@ -271,10 +315,7 @@ OPTION FLAGS
  --help  Show this help screen
  -h      Show this help screen.
 
- --get-theatre  Generates a hash-key-list of FUNCTIONS and OPTIONS. [DEBUG]
-
- -E  Turn on extended regular expression features for the subset and filter
-     FUNCTIONS. This flag overrides OPTION \`-e'.
+ --get-theatre  Generates a hash-key-list of FUNCTIONS and OPTIONS.
 
  -R  Convert path record(s) to realpath(s).
  -d  Only print existing directories.
@@ -284,19 +325,13 @@ OPTION FLAGS
  -L  Do not print links.
  -n  Only print file names.
  -z  Set Standards Compliant IFS = \$' \t\n'
- -T  Match the tail/type of records. Uses the RX char: \`\$'
- -H  Match the head/heading of records. Uses the RX char: \`^'
-
- NOTE: 
-
- (1) Combining \`-H' and \`-T' has the effect of matching: \`^...$'; where ...
-     is your primary-expression.
+ -t  Match the tail/type of records. Uses the RX char: \`\$'
+ -h  Match the head/heading of records. Uses the RX char: \`^'
 
 OPTION SETTINGS
 
- -T: TEXT     Sets the TAIL of all primary expressions to text.
- -H: TEXT     Sets the HEAD of all primary expressions to TEXT.
- -O: OPTIONS  Sets the main OPTIONS to pass to both sed and grep to OPTIONS.
+ -t: TEXT     Sets the TAIL of all primary expressions to text.
+ -h: TEXT     Sets the HEAD of all primary expressions to TEXT.
 
  -Q: TEXT     Sets the internal expression separator of the subset FUNCTION
               to TEXT. You may never need this option. The default is \$'\1'.
@@ -308,10 +343,9 @@ OPTION SETTINGS
               control of the shell expansion.
 
  -i: FILTER   Perform an include match against FILTER(s). Works like \`-e:'.
- -l: NUMBER   Sets the max-depth of the catalog FUNCTION to NUMBER.
  
  -q: TEXT     Set regular-expression quoting character to TEXT for internal
-              scripts. This feature only affects primary expressions.
+              scripts. The default is \`'".
  
  -z: TEXT     Sets the IFS variable to TEXT. See your shell manual about IFS.
 
@@ -338,21 +372,29 @@ FUNCTIONS
                           all files which are NOT links. The first FILE cannot
                           be: \`-e'.
 
- pipe FUNCTION ...        Reads the standard input and sends it as the data
-                          portion of FUNCTION OR COMMAND, forwarding all
-                          remaining parameters to the FUNCTION OR COMMAND.
+ read-pipe-parameters COMMAND or FUNCTION [OPTIONS]
+ 
+   Read lines from input and send them as parameters to COMMAND or FUNCTION
+   with any OPTIONS.
+   
+   [FORMERLY: pipe]
 
+ write-parameter-pipe  ...  Converts all parameters to line-stream-output.
+ 
  trace SOMETHING     Performs a debug trace explaining dependency chain,
-                     backward AND forward [quantum-filters ;)].
+                     backwards AND forwards [quantum-filters ;)].
                      
  realpaths FILE ...       List only the realpath(s) of FILE(S).
 
  key-within-list VALUES... KEY  
  
    Searches through values for key. Returns success if literally found. Ready
-   made for pipe FUNCTION.
+   made for read-pipe-parameters FUNCTION.
 
  subset DATA FIND-PATTERN REPLACE-TEXT ...
+ 
+   Searches through DATA using FIND-PATTERN and replaces matches with REPLACE-
+   TEXT. Multiple FIND-PATTERN and REPLACE-TEXT expressions may be supplied.
 
 NOTE:
 
@@ -371,10 +413,6 @@ NOTE:
                 
                   file://$(realpath $0)
                ]
-               
- (3) Separate FUNCTION OPTIONS using the pipe FUNCTION in conjunction with
-     shell pipes. Combining multiple options in the wrong way may cause
-     undesired operations.
 
 See: "regex - POSIX.2 regular expressions" within the Linux Programmer's Manual
      for help on expressions with and without the -E OPTION.
@@ -397,22 +435,245 @@ exit 1;
 
 }
 
-OPTIONS="--get-theatre --help -E -H -H: -HT -L -O: -Q: -R -T -T: -TH -d -e: -f -h -i: -l -l: -p -q: -z -z:";
-FUNCTIONS="catalog directories files filter key-within-list links names parents pipe realpaths subset trace ";
+function trace() {
+  DEBUG=1 call "$@";
+}
+
+function parseopt.match() {
+  local match="$1"; shift;
+  for param; do [[ "$match" == "$param" ]] && return 0; done;
+  return 1;
+}
+
+function parseopt.keys() {
+  eval echo \${!$1[@]}\;;
+}
+
+function parseopt.set() {
+  local destination=$1 assignment; shift;
+  for assignment; do
+    local key="${assignment/=*/}";
+    local value="${assignment/*=/}"
+    printf -v ${destination}$key %s "$value"
+  done;
+}
+
+function parseopt.get() {
+  local source=$1 name; shift;
+  for name; do
+    eval echo \${$source[$name]}\;;
+  done;
+}
+
+function parseopt.content() {
+  eval echo \${$1[@]};
+}
+
+function parseopt.begin() {
+  parseopt.set $1 [INDEX]=1 [SUBINDEX]=0;
+}
+
+function parseopt.dump() { 
+
+  local name;
+  for name in $(parseopt.keys $1); do
+    printf '%s: %s\n' $name "$(parseopt.get $1 $name)";
+  done
+
+}
+
+function parseopt() {
+
+  # PARAMETERS: $1 and $2 are names of associative arrays.
+  # the output of the function will be placed in $2
+  # the state of the parsing is saved in $1.
+
+  # the remaining parameters are parsed. the number of items parsed are
+  # returned in 2[SIZE].
+
+  local PO_STATE=$1 RCRD_PARAMETER=$2; shift 2;
+
+  local INDEX=$PO_STATE[INDEX] SUBINDEX=$PO_STATE[SUBINDEX];
+  local PARAMETER=BASH_REMATCH[1] VALUE=BASH_REMATCH[2]
+    
+  parseopt.set $RCRD_PARAMETER [BRANCH]=0 [INDEX]=${!INDEX} [INPUT]="$1";
+  # 1 test for long option
+  [[ "$1" =~ ^--([a-zA-Z-]*[a-zA-Z])$ ]] && {
+    parseopt.set $RCRD_PARAMETER [BRANCH]=1 \
+      [PARAMETER]="${!PARAMETER}" [INDEX]=${!INDEX} \
+        [SUBINDEX]=0 [VALUE]='' [SHORT]=0 [SIZE]=1;
+    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE LONG) || return 11;
+#    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE SETTINGS) && {
+#      parseopt.set $RCRD_PARAMETER [VALUE]="$2" [SIZE]=2;
+#      let $INDEX++;
+#    };
+    let $INDEX++;
+    return 0;
+  }
+
+  # 2 test for long option with setting specification
+  [[ "$1" =~ ^--([a-zA-Z-]*[a-zA-Z]):$ ]] && {
+    parseopt.set $RCRD_PARAMETER [BRANCH]=2 \
+      [PARAMETER]="${!PARAMETER}" [INDEX]=${!INDEX} \
+        [SUBINDEX]=0 [VALUE]="$2" [SHORT]=0 [SIZE]=2;
+    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE LONG) || return 21;
+    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE SETTINGS) || return 22;
+    let $INDEX+=2;
+    return 0;
+  }
+
+  # 3 test for long option with setting specification and data
+  [[ "$1" =~ ^--([a-zA-Z-]*[a-zA-Z])[:=](.*)$ ]] && {
+    parseopt.set $RCRD_PARAMETER [BRANCH]=3 \
+      [PARAMETER]="${!PARAMETER}" [INDEX]=${!INDEX} \
+        [SUBINDEX]=0 [VALUE]="${!VALUE}" [SHORT]=0 [SIZE]=1;
+    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE LONG) || return 31;
+    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE SETTINGS) || return 32;
+    let $INDEX++;
+    return 0;
+  }
+
+  # 4 test for short option
+  [[ "$1" =~ ^-([a-zA-Z])$ ]] && {
+    parseopt.set $RCRD_PARAMETER [BRANCH]=4 \
+      [PARAMETER]="${!PARAMETER}" [INDEX]=${!INDEX} \
+        [SUBINDEX]=0 [VALUE]="" [SHORT]=1 [SIZE]=1;
+    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE SHORT) || return 41;
+#    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE SETTINGS) && {
+#      parseopt.set $RCRD_PARAMETER [VALUE]="$2" [SIZE]=2;
+#      let $INDEX++;
+#    };
+    let $INDEX++;
+    return 0;
+  }
+
+  # 5 test for short option with setting
+  [[ "$1" =~ ^-([a-zA-Z]):$ ]] && {
+    parseopt.set $RCRD_PARAMETER [BRANCH]=5 \
+      [PARAMETER]="${!PARAMETER}" [INDEX]=${!INDEX} \
+        [SUBINDEX]=0 [VALUE]="$2" [SHORT]=1 [SIZE]=2;
+    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE SHORT) || return 51;
+    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE SETTINGS) || return 52;
+    let $INDEX+=2;
+    return 0;
+  }
+
+  # 6 test for short option with setting and data
+  [[ "$1" =~ ^-([a-zA-Z])[:=](.+)$ ]] && {
+    parseopt.set $RCRD_PARAMETER [BRANCH]=6 \
+      [PARAMETER]="${!PARAMETER}" [INDEX]=${!INDEX} \
+        [SUBINDEX]=0 [VALUE]="${!VALUE}" [SHORT]=1 [SIZE]=1;
+    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE SHORT) || return 61;
+    parseopt.match "${!PARAMETER}" $(parseopt.get $PO_STATE SETTINGS) || return 62;
+    let $INDEX++;
+    return 0;
+  }
+  
+  # 7 test for multiple short option
+  [[ "$1" =~ ^-([a-zA-Z]+)$ ]] && {
+    local match=${BASH_REMATCH[1]};
+    local -i length=${#match};
+    local C=${match:${!SUBINDEX}:1};
+    parseopt.set $RCRD_PARAMETER [BRANCH]=7 \
+      [PARAMETER]="$C" [INDEX]=${!INDEX} \
+        [SUBINDEX]=${!SUBINDEX} [VALUE]="" [SHORT]=1;
+    parseopt.match "${C}" $(parseopt.get $PO_STATE SHORT) || return 71;
+    let $SUBINDEX++;
+    if (( $SUBINDEX == length )); then
+      eval $RCRD_PARAMETER[SIZE]=1;
+#      parseopt.match "${C}" $(parseopt.get $PO_STATE SETTINGS) && {
+#        parseopt.set $RCRD_PARAMETER [VALUE]="$2" [SIZE]=2;
+#        let $INDEX++;
+#        true
+#      } 
+      let $INDEX++;
+      let $SUBINDEX=0;
+    else
+      eval $RCRD_PARAMETER[SIZE]=0;
+      parseopt.match "${C}" $(parseopt.get $PO_STATE SETTINGS) && {
+        parseopt.match "$C" $(parseopt.get $PO_STATE HAS_DEFAULT) || return 72;
+      } 
+    fi;
+    return 0;
+  }
+
+  # 8 test for multiple short option with setting
+  [[ "$1" =~ ^-([a-zA-Z]+):$ ]] && {
+    local match=${BASH_REMATCH[1]};
+    local -i length=${#match};
+    local C=${match:${!SUBINDEX}:1};
+    parseopt.set $RCRD_PARAMETER [BRANCH]=8 \
+      [PARAMETER]="$C" [INDEX]=${!INDEX} \
+        [SUBINDEX]=${!SUBINDEX} [VALUE]="" [SHORT]=1;
+    parseopt.match "${C}" $(parseopt.get $PO_STATE SHORT) || return 81;
+    let $SUBINDEX++;
+    if (( $SUBINDEX == length )); then
+      eval $RCRD_PARAMETER[VALUE]="$2";
+      eval $RCRD_PARAMETER[SIZE]=2;
+      parseopt.match "${C}" $(parseopt.get $PO_STATE SETTINGS) && {
+        parseopt.set $RCRD_PARAMETER [VALUE]="$2" [SIZE]=2;
+        let $INDEX++;
+      } 
+      let $INDEX++;
+      let $SUBINDEX=0;
+    else
+      eval $RCRD_PARAMETER[SIZE]=0;
+      parseopt.match "${C}" $(parseopt.get $PO_STATE SETTINGS) && {
+        parseopt.match "$C" $(parseopt.get $PO_STATE HAS_DEFAULT) || return 82;
+      } 
+    fi;
+    return 0;
+  }
+
+  # 9 test for multiple short option with setting and data
+  [[ "$1" =~ ^-([a-zA-Z]+)[:=](.+)$ ]] && {
+    local match=${BASH_REMATCH[1]};
+    local -i length=${#match};
+    local C=${match:${!SUBINDEX}:1};
+    parseopt.set $RCRD_PARAMETER [BRANCH]=1 \
+      [PARAMETER]="$C" [INDEX]=${!INDEX} \
+        [SUBINDEX]=${!SUBINDEX} [VALUE]="" [SHORT]=1;
+    parseopt.match "${C}" $(parseopt.get $PO_STATE SHORT) || return 91;
+    let $SUBINDEX++;
+    if (( $SUBINDEX == length )); then
+      eval $RCRD_PARAMETER[VALUE]="${BASH_REMATCH[2]}";
+      eval $RCRD_PARAMETER[SIZE]=1;
+      parseopt.match "${C}" $(parseopt.get $PO_STATE SETTINGS) && {
+        parseopt.set $RCRD_PARAMETER [VALUE]="${!VALUE}";
+      } 
+      let $INDEX++;
+      let $SUBINDEX=0;
+    else
+      eval $RCRD_PARAMETER[SIZE]=0;
+      parseopt.match "${C}" $(parseopt.get $PO_STATE SETTINGS) && {
+        parseopt.match "$C" $(parseopt.get $PO_STATE HAS_DEFAULT) || return 92;
+      } 
+    fi;
+    return 0;
+  }
+  
+  return 1;
+
+}
+
+OPTIONS="--get-theatre --help -h: -L -Q: -R -d -e: -f -h -i: -l -p -q: -z -z:"
+FUNCTIONS="catalog directories files filter read-pipe-parameters key-within-list links names parents parseopt write-parameter-pipe  realpaths subset trace"
 
 (( DEBUG == 1 )) && {
   DEBUG_FUNCTIONS="declare dump.function.table filter.script subset.script";
 }
 
-function trace() {
-  DEBUG=1 call "$@";
-}
+declare -A CONFIG
 
-function call() {
-  local name trace=${trace}
-  [[ "$1" != trace ]] && trace+=" <- $1";
-  [[ $DEBUG == 1 ]] && {  
-    key-within-list $(echo $FUNCTIONS) "$1" && {
+parseopt.set CONFIG [LONG]="get-theatre help"
+parseopt.set CONFIG [SHORT]="t L Q R d e f h i l l p q z";
+parseopt.set CONFIG [SETTINGS]="h Q t e i l q z"
+parseopt.set CONFIG [HAS_DEFAULT]="h t"
+
+parseopt.begin CONFIG;
+
+function dump.trace() {
+{
       echo
       echo $command trace: 
       echo
@@ -426,31 +687,57 @@ function call() {
       echo
       echo [OUT] $trace [IN]
       echo
-    } >&2;
-  }
+    };
+}
+
+function call() {
+
+  (( $# == 0 )) && {
+    echo $COMMAND: error: invalid call: "no parameters were specified for the call with: ${trace/*<- /}";
+    exit 1;
+  } >&2;
+  
+  local name trace=${trace}
+  [[ "$1" != trace ]] && trace+=" <- $1";
+  [[ $DEBUG == 1 ]] && {  
+    key-within-list $(echo $FUNCTIONS) "$1" && dump.trace
+  }  >&2;
+
   key-within-list $OPTIONS $FUNCTIONS $DEBUG_FUNCTIONS "$1" && { 
     "$@"; exit $?; 
+  };
+  
+  declare -A parse;
+  parseopt.begin CONFIG;
+
+  parseopt CONFIG parse "$@" || {
+    echo "$COMMAND parameter parse error: code: $?: parameter #${parse[INDEX]} didn't parse" >&2;
+    parseopt.dump parse;
+    exit $code;
   }
+  
+  (( parse[BRANCH] > 6 )) && {
+    local cmd="-${parse[PARAMETER]}";
+    (( parse[SIZE] == 2 )) && cmd+=":";
+    $cmd -${parse[INPUT]:2} "${@:2}"; exit $?;
+  }
+  
+  #parseopt.dump parse;
+
   {
     echo invalid command: "\`$1'";
     echo type: $COMMAND --help or $COMMAND -h for $COMMAND help;
     exit 1;
   }  >&2;
+  
 }
 
 trace='' call "$@";
 
 TODO:
 
-  NON-SETTING OPTION MASHUPS IE -ERd ... == (set flags=-E; pipe directories | pipe realpaths)
-  NON-SETTING OPTION MASHUP ENDING WITH OPTION SETTING
   Lesser used functions, having no short-cuts.
-  
-  RESTRICT grep and sed OPTIONS to -E -v and EMPTY only to take the stress off
-  of porting. OTHER DECLARED availabilities such as sed -i are bonus. Not having
-  an interface defined makes porting in future time nightmarish.
-  
+    
   help section about regular: regular expressions -- lol and extended regular
   expressions.
-  
   
