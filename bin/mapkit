@@ -92,7 +92,7 @@ function write-parameter-pipe () {
   printf "%s\n" "$@";
 }
 
-function read-pipe-parameters() {
+function read-parameter-pipe () {
   local lines;
   readarray lines;
   "$@" "${lines[@]%$'\n'}";
@@ -223,11 +223,11 @@ function -i:() { # runs inclusive regular expression filter; matches should be s
 }
 
 function -f() { # filters content by existing files
-  call "$@" | read-pipe-parameters files;
+  call "$@" | read-parameter-pipe  files;
 }
 
 function -d() { # filters content by existing directories
-  call "$@" | read-pipe-parameters directories;
+  call "$@" | read-parameter-pipe  directories;
 }
 
 function -z() { # reset IFS
@@ -239,19 +239,19 @@ function -z:() { # sets IFS: PARAMETER
 }
 
 function -r() {
-  call "$@" | read-pipe-parameters realpaths;
+  call "$@" | read-parameter-pipe  realpaths;
 }
 
 function -l() {
-  call "$@" | read-pipe-parameters links --;
+  call "$@" | read-parameter-pipe  links --;
 }
 
 function -L() {
-  call "$@" | read-pipe-parameters links -e --;
+  call "$@" | read-parameter-pipe  links -e --;
 }
 
 function -p() {
-  call "$@" | read-pipe-parameters parents;
+  call "$@" | read-parameter-pipe  parents;
 }
 
 function -s:() {
@@ -533,7 +533,7 @@ function parseopt() {
 }
 
 OPTIONS="--get-theatre --help -L -Q: -d -e: -f -h -h: -i: -l -p -q: -r -s: -t -t: -z -z:";
-FUNCTIONS="catalog directories files filter key-within-list links names parents parseopt read-pipe-parameters realpaths subset trace write-parameter-pipe";
+FUNCTIONS="catalog directories files filter key-within-list links names parents parseopt read-parameter-pipe  realpaths subset trace write-parameter-pipe";
 
 (( DEBUG == 1 )) && {
   DEBUG_FUNCTIONS="declare dump.function.table filter.script subset.script";
@@ -717,7 +717,7 @@ FUNCTIONS
  links [-e] -- FILE ...   Lists only the links in FILE(S). With \`-e', lists
                           all files which are NOT links.
 
- read-pipe-parameters COMMAND or FUNCTION [OPTIONS]
+ read-parameter-pipe  COMMAND or FUNCTION [OPTIONS]
 
    Read lines from input and send them as parameters to COMMAND or FUNCTION
    with any OPTIONS.
@@ -734,7 +734,7 @@ FUNCTIONS
  key-within-list VALUES... KEY  
 
    Searches through values for key. Returns success if literally found. Ready
-   made for read-pipe-parameters FUNCTION.
+   made for read-parameter-pipe  FUNCTION.
 
  subset CUT-PATTERN PASTE-TEXT[ CUT-PATTERN PASTE-TEXT[ ...]]
 
