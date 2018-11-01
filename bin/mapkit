@@ -729,9 +729,9 @@ FUNCTIONS
                      
  realpaths FILE ...       List only the realpath(s) of FILE(S).
 
- key-within-list KEY -- VALUES ...
+ key-within-list KEY -- VALUE ...
 
-   Searches through values for key. Returns success if literally found. Ready
+   Searches through VALUE(S) for key. Returns success if literally found. Ready
    made for read-parameter-pipe  FUNCTION.
 
  subset CUT-PATTERN PASTE-TEXT[ CUT-PATTERN PASTE-TEXT[ ...]]
