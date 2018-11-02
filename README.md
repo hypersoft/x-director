@@ -24,6 +24,14 @@ bin/xd --help
 Try this one:
 
 ```sh
+printf -- "-I%s\n" $(xd -s:u -rti:nspr -d catalog 2 -- /include /usr/include /usr/local/include)
+-I/usr/include/nspr
+-I/usr/local/include/nspr
+```
+
+That's a great way to find an include... What about the libraries?
+
+```sh
 printf -- '-L%s\n' $(xd -s:u -prti:nspr4\.so catalog 1 -- /lib /usr/lib /usr/local/lib)
 -L/usr/lib
 -L/usr/local/lib
