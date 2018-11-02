@@ -19,3 +19,12 @@ bin/xd --help
 
 "Having two kinds of REs is a botch." -- kernel.org (`man 7 regex`)
 
+"So is having a shitload of directories for a single target." -- A Smart Ass
+
+Try this one:
+
+```sh
+printf -- '-L%s\n' $(xd -s:u -prti:nspr4\.so catalog 1 -- /lib /usr/lib /usr/local/lib)
+-L/usr/lib
+-L/usr/local/lib
+```
