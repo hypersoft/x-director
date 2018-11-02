@@ -588,7 +588,7 @@ cat <<EOF
 
 $COMMAND [OPTIONS] FUNCTION [...]
 
-General Purpose, Mutliple Record, File and String: Utility
+General Purpose, Mutliple Record, File, Expression and Execution: Utility
 
  ALL EXPRESSIONS, REGULARLY: EXTENDED.
 
@@ -737,11 +737,11 @@ NOTE:
 See: "regex - POSIX.2 regular expressions" within the Linux Programmer's Manual
      for help on expressions [\`man 7 regex'].
 
-END $COMMAND --help ############################################################
+END $COMMAND --help ##################################################################
 
 $COMMAND [OPTIONS] FUNCTION [...]
 
-General Purpose, Mutliple Record, File and String: Utility
+General Purpose, Mutliple Record, File, Expression and Execution: Utility
 
  ALL EXPRESSIONS, REGULARLY: EXTENDED.
 
