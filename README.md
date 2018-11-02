@@ -28,3 +28,5 @@ printf -- '-L%s\n' $(xd -s:u -prti:nspr4\.so catalog 1 -- /lib /usr/lib /usr/loc
 -L/usr/lib
 -L/usr/local/lib
 ```
+
+You may now begin: The WOW.
