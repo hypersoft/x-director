@@ -726,6 +726,7 @@ NOTE:
                 
                   file://$(realpath $0)
                ]
+
  (3) CAVEAT: using the form -word:parameter, where parameter expands to an empty
      string will cause the parmater parser to grab the next available parameter.
      the only fix for this is a change of syntax. Please use -word= to avoid the
