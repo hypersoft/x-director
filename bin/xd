@@ -10,7 +10,7 @@ BAD_SUBST_PARAMS="wrong number of parameters; expected pattern and replacement p
 
 function subset.script() {
 
-  local head=${head:-''} tail=${tail:-''} split=${split:-$'\1'} quote=${quote:-"'"} flags=-E;
+  local head=${head:-''} tail=${tail:-''} split=${split:-$'\1'} quote=${quote:-"'"} flags;
 
   # the following parameters are paired in twos:
   # $1 find-pattern, $2 replacement[, ...]
@@ -25,7 +25,7 @@ function subset.script() {
     exit 1;
   } >&2;
 
-  echo -n sed $flags;
+  echo -n sed -E;
   while (( $# )); do printf " -e ${quote}s%sg${quote}" "${split}${head}${1}${tail}${split}${2}${split}"; shift 2; done;
   echo ';'
 
@@ -33,10 +33,10 @@ function subset.script() {
 
 function filter.script() {
 
-    local head=${head:-''} tail=${tail:-''} quote=${quote:-"'"} flags=-E;
+    local head=${head:-''} tail=${tail:-''} quote=${quote:-"'"} flags;
 
     [[ "$1" == -e ]] && { # for invert match == '-e[xclude]'
-      flags+=" -v"; shift;
+      flags="-v"; shift;
     }
 
     [[ "$1" == -- ]] || {
@@ -48,7 +48,7 @@ function filter.script() {
     
     shift;
     
-    echo -n grep $flags;
+    echo -n grep -E $flags;
     while (( $# )); do printf " -e ${quote}${head}%s${tail}${quote}" "$1"; shift; done; 
     echo ';';
     
