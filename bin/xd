@@ -607,7 +607,7 @@ OPTION FLAGS
    Lists the real path of files in the current directory.
 
  --help  Show this help screen
-  -h      Show this help screen.
+  -h     Show this help screen.
 
  --get-theatre  Generates a hash-key-list of FUNCTIONS and OPTIONS.
 
