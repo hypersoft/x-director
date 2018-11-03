@@ -1,0 +1,20 @@
+VERBOSE ENVIRONMENT SHORTCUTS
+
+ -t: TEXT     Sets the TAIL of all primary expressions to text.
+ -h: TEXT     Sets the HEAD of all primary expressions to TEXT.
+
+ -Q: TEXT     Sets the internal expression separator of the subset FUNCTION
+              to TEXT. You may never need this option. The default is \$'\1'.
+              This feature only affects the subset FUNCTION.
+
+ -q: TEXT     Set regular-expression quoting character to TEXT for internal
+              scripts. The default is \`'".
+
+ -z: TEXT     Sets the IFS variable to TEXT. See your shell manual about IFS.
+
+QUICK ENVIRONMENT SHORTCUTS
+
+  -z  Set Standards Compliant IFS = \$' \t\n'.
+  -t  Match the tail/type of records. Uses the RX char: \`\$'
+  -h  Match the head/heading of records. Uses the RX char: \`^'
+

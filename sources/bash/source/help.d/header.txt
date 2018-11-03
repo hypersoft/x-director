@@ -14,3 +14,23 @@ GitHub: https://github.com/hypersoft/x-director
 (C) 2018; Triston-Jerard: Taylor;
           Hypersoft-Systems: U.-S.-A.
 
+GENERAL USAGE
+
+ Flags may be combined to produce a compound option. For example:
+
+   $COMMAND -rf catalog 1 -- .
+
+   Lists the real path of files in the current directory.
+
+ --help  Show this help screen
+  -h     Show this help screen.
+
+SETTINGS USAGE
+
+ Settings may be combined with flags as a single parameter, IF: it is the last
+ OPTION in the single-parameter-set. For example:
+
+   $COMMAND -ti:\.md -f catalog 1 -- .
+
+   Lists all .md files in the current directory.
+

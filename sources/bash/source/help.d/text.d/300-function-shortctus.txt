@@ -1,0 +1,12 @@
+FUNCTION SHORTCUTS
+
+ --get-theatre  Generates a hash-key-list of FUNCTIONS and OPTIONS.
+
+ -r  Convert path record(s) to realpath(s).
+ -d  Only print existing directories.
+ -f  Only print existing files.
+ -p  Only print parent directories.
+ -l  Only print links.
+ -L  Do not print links.
+ -n  Only print file names.
+

@@ -1,68 +1,3 @@
-OPTION FLAGS
-
- Flags may be combined to produce a compound option. For example:
-
-   $COMMAND -rf catalog 1 -- .
-
-   Lists the real path of files in the current directory.
-
- --help  Show this help screen
-  -h     Show this help screen.
-
- --get-theatre  Generates a hash-key-list of FUNCTIONS and OPTIONS.
-
- -r  Convert path record(s) to realpath(s).
- -d  Only print existing directories.
- -f  Only print existing files.
- -p  Only print parent directories.
- -l  Only print links.
- -L  Do not print links.
- -n  Only print file names.
-
-OPTION FLAGS: ENVIRONMENT
-
-  -z  Set Standards Compliant IFS = \$' \t\n'.
-  -t  Match the tail/type of records. Uses the RX char: \`\$'
-  -h  Match the head/heading of records. Uses the RX char: \`^'
-
-OPTION SETTINGS
-
- Settings may be combined with flags as a single parameter, IF: it is the last
- OPTION in the single-parameter-set. For example:
-
-   $COMMAND -ti:\.md -f catalog 1 -- .
-
-   Lists all .md files in the current directory.
-
- -e: FILTER   Perform an exclude match against FILTER(s). Multiple filters may
-              be supplied as a single parameter. The shell will expand the
-              FILTERS according to IFS (see also OPTIONS: \`-z': and \`-z') for
-              control of the shell expansion.
-
- -i: FILTER   Perform an include match against FILTER(s). Works like \`-e:'.
-
- -s: TYPE     Perform a sort by TYPE; where TYPE is:
-
-               u for uniqe sort.
-               v for version sort.
-               n for name sort.
-               
-               [TYPES cannot be combined as a single parameter to \`-s:']
-
-OPTION SETTINGS: EVIRONMENT
- 
- -t: TEXT     Sets the TAIL of all primary expressions to text.
- -h: TEXT     Sets the HEAD of all primary expressions to TEXT.
-
- -Q: TEXT     Sets the internal expression separator of the subset FUNCTION
-              to TEXT. You may never need this option. The default is \$'\1'.
-              This feature only affects the subset FUNCTION.
-
- -q: TEXT     Set regular-expression quoting character to TEXT for internal
-              scripts. The default is \`'".
-
- -z: TEXT     Sets the IFS variable to TEXT. See your shell manual about IFS.
-
 FUNCTIONS
 
  catalog [NUMBER] -- DIRECTORY [...]
@@ -117,4 +52,4 @@ FUNCTIONS
    Searches through stdin line records using CUT-PATTERN and replaces matches
    with PASTE-TEXT. Multiple CUT-PATTERN and PASTE-TEXT expressions may be
    supplied. Use the write-parameter-pipe FUNCTION if stdio is not convenient.
-   
+

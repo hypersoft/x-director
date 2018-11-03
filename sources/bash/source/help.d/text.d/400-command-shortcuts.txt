@@ -1,0 +1,17 @@
+COMMAND SHORTCUTS
+
+ -i: FILTER   Perform an include match against FILTER(s). Works like \`-e:'.
+
+ -s: TYPE     Perform a sort by TYPE; where TYPE is:
+
+               u for uniqe sort.
+               v for version sort.
+               n for name sort.
+               
+               [TYPES cannot be combined as a single parameter to \`-s:']
+
+ -e: FILTER   Perform an exclude match against FILTER(s). Multiple filters may
+              be supplied as a single parameter. The shell will expand the
+              FILTERS according to IFS (see also OPTIONS: \`-z': and \`-z') for
+              control of the shell expansion.
+
