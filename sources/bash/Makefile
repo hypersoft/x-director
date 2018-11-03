@@ -13,11 +13,11 @@ $(BUILD_OUTPUT_DIR)/options.sh: $(BUILD_OUTPUT_DIR)/functions.lst
 $(BUILD_OUTPUT_DIR)/functions.sh: $(BUILD_OUTPUT_DIR)/functions.lst
 	@printf "FUNCTIONS='\n%s\n';\n" "`grep -E -v -e '^-' -e '\.' -e '^call' $<`" > $@;
 
-$(PROJECT_AUX_SCRIPT): $(PROJECT_AUX_SCRIPTS) $(PROJECT_LIBRARY_SCRIPTS) $(PROJECT_AUTO_SCRIPTS) $(PROJECT_MAIN_SCRIPT)
+$(PROJECT_AUX_SCRIPT): $(PROJECT_LIBRARY_SCRIPTS) $(PROJECT_AUX_SCRIPTS) $(PROJECT_AUTO_SCRIPTS) $(PROJECT_MAIN_SCRIPT)
 	@mkdir -p $(BUILD_OUTPUT_DIRECTORIES)
 	bin/compile $^ > $@
 
-$(PROJECT_PROGRAM): $(PROJECT_AUX_SCRIPT)
+$(PROJECT_PROGRAM): $(PROJECT_AUX_SCRIPT) Makefile config.mk
 	@mkdir -p `dirname $@`
 	bin/link /bin/bash $< > $@
 	chmod +x $@
