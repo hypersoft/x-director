@@ -1,0 +1,4 @@
+XD_SEP_ROW=$'\n'
+XD_SEP_COL=$' '
+XD_SEP_ERE=$'\1'
+XD_SEP_FILE=:
