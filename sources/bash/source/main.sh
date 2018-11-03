@@ -1,14 +1,31 @@
 
 declare -A CONFIG
-opkit.set CONFIG [LONG]="get-theatre help"
-opkit.set CONFIG [SHORT]="t L Q r d e f h i l l p q s z n";
-opkit.set CONFIG [SETTINGS]="h Q t e i l q z s"
-opkit.set CONFIG [HAS_DEFAULT]="h t z"
 
-opkit.begin CONFIG;
+function create-opkit-config() {
 
-function dump.trace() {
+  opkit.begin CONFIG;
+
+  local short=$(write-parameter-pipe $OPTIONS | subset '^\--?' '' ':' '' '([a-z]+-?[a-z])+' '');
+	# echo $short
+	opkit.set CONFIG [SHORT]="${short}"
+
+	local long=$(write-parameter-pipe $OPTIONS | subset '^-[a-zA-Z]:?' '' '^--' '')
+	#echo $long
+	opkit.set CONFIG [LONG]="${long}"
+
+	local settings=$(write-parameter-pipe $OPTIONS | filter -- '\:$' | subset '^-|\:$' '')
+	#echo $settings
+	opkit.set CONFIG [SETTINGS]="$settings"
+
+	local has_default=$(write-parameter-pipe $short | uniq -D | uniq)
+	#echo $has_default
+	opkit.set CONFIG [HAS_DEFAULT]="${has_default}"
+	
+}
+
+function debug.dump.trace() {
 {
+  (( DEBUG )) || return 0;
       echo
       echo $command trace: 
       echo
@@ -34,9 +51,8 @@ function call() {
   
   local name TRACE=${trace}
   [[ "$1" != trace ]] && trace+=" <- $1";
-  [[ $DEBUG == 1 ]] && {  
-    key-within-list "$1" -- $(echo $FUNCTIONS) && dump.trace
-  }  >&2;
+
+  key-within-list "$1" -- $(echo $FUNCTIONS) && debug.dump.trace
 
   key-within-list "$1" -- $OPTIONS $FUNCTIONS $DEBUG_FUNCTIONS && { 
     "$@"; exit $?; 
@@ -70,6 +86,8 @@ function call() {
   }  >&2;
   
 }
+
+create-opkit-config;
 
 call "$@";
 
