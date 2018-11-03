@@ -1,12 +1,6 @@
-
-function dump.function.table() {
-  local all="$(env -i DEBUG=1 $0 declare -pF | filter -e -- '\.' | cut -d ' ' -f3)"
-  echo OPTIONS=\"$(write-parameter-pipe  "$all" | filter -- '^-')\";
-  echo FUNCTIONS=\"$(write-parameter-pipe  "$all" | filter -e -- '^-' '^call$')\";
-}
-
 function --get-theatre() {
-  dump.function.table;
+  echo OPTIONS=\"${OPTIONS//$'\n'/ }\";
+  echo FUNCTIONS=\"${FUNCTIONS//$'\n'/ }\";
 }
 
 function -h() {
@@ -47,4 +41,3 @@ function -z() { # reset IFS
 function -z:() { # sets IFS: PARAMETER
   IFS=$1 call "${@:2}";
 }
-

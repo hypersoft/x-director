@@ -1,4 +1,3 @@
-
 # opkit gives you 9 parameter triggers.
 
 function opkit.match() {
@@ -187,42 +186,3 @@ function opkit.parse() {
   }
   return 1;
 }
-
-# end option parsing utilities section
-
-(( OK_DEBUG )) && {
-
-  # todo: error codes for too few options
-  # todo: make branch zero literal match, [taking primary match priority over all processing]
-  # and branch 10 regular expression match
-  # and branch 11 failed to parse.
-  # add the plus/minus status and trigger
-  
-  declare -A CONFIG;
-
-  opkit.set CONFIG [LONG]="get-theatre help"
-  opkit.set CONFIG [SHORT]="H T L Q R d e f h i l l p q z";
-  opkit.set CONFIG [SETTINGS]="H Q T e i l q z"
-  
-  # options that have a default can be specified with or without source
-  # operators. an option listed here has no effect if it is not listed in
-  # CONFIG[SETTINGS]
-  opkit.set CONFIG [HAS_DEFAULT]="H T"
-
-  opkit.begin CONFIG;
-
-  while (( $# )); do
-    declare -A parse;
-    opkit.parse CONFIG parse "$@" || {
-      echo "error: parameter #${parse[POINT]} didn't parse";
-      opkit.dump parse;
-      exit 1;
-    }
-    opkit.dump parse;
-    shift ${parse[SIZE]}
-  done;
-
-  declare -p CONFIG
-
-}
-

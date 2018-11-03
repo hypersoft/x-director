@@ -53,5 +53,3 @@ function -f() { # filters content by existing files
 function -d() { # filters content by existing directories
   call "$@" | read-parameter-pipe  directories;
 }
-
-
