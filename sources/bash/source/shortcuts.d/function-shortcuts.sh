@@ -18,26 +18,6 @@ function -n() {
   call "$@" | read-parameter-pipe  names;
 }
 
-function -s:() {
-  [[ $1 == u ]] && {
-    shift;
-    call "$@" | uniq;
-    return;
-  }
-  [[ $1 == v ]] && {
-    shift;
-    call "$@" | sort -V;
-    return;
-  }
-  [[ $1 == n ]] && {
-    shift;
-    call "$@" | sort;
-    return;
-  }
-  echo "$COMMAND: error: no sorting solution found for: $1";
-  exit 1;
-}
-
 function -e:() { # runs exclusive filter; matches should be seprated by IFS[0-2]
   call "${@:2}" | filter -e -- $1;
 }
