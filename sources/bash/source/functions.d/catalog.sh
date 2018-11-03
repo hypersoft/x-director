@@ -19,10 +19,10 @@ function catalog(){
     for file in "${dir%/}"/*; do
       [ -e "$file" ] || [ -L "$file" ] || continue
       if [ -d "$file" ]; then
-        printf "%s\n" "$file"
+        printf "%s$RSO" "$file"
         catalog -- "$file"
       else
-        printf "%s\n" "$file"
+        printf "%s$RSO" "$file"
       fi
     done
   done;
