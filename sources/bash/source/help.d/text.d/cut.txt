@@ -117,3 +117,4 @@ FUNCTIONS
    Searches through stdin line records using CUT-PATTERN and replaces matches
    with PASTE-TEXT. Multiple CUT-PATTERN and PASTE-TEXT expressions may be
    supplied. Use the write-parameter-pipe FUNCTION if stdio is not convenient.
+   
