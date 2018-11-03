@@ -2,8 +2,6 @@ BAD_SUBST_PARAMS="wrong number of parameters; expected pattern and replacement p
 
 function subset.script() {
 
-  local head=${head:-''} tail=${tail:-''} split=${split:-$'\1'} quote=${quote:-"'"} flags;
-
   # the following parameters are paired in twos:
   # $1 find-pattern, $2 replacement[, ...]
   # this format allows you to perform successive substitutions in a reliable way.
@@ -18,7 +16,7 @@ function subset.script() {
   } >&2;
 
   echo -n sed -E;
-  while (( $# )); do printf " -e ${quote}s%sg${quote}" "${split}${head}${1}${tail}${split}${2}${split}"; shift 2; done;
+  while (( $# )); do printf " -e ${REQ}s%sg${REQ}" "${RES}${REH}${1}${RET}${RES}${2}${RES}"; shift 2; done;
   echo ';'
 
 }

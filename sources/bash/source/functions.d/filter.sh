@@ -1,9 +1,7 @@
 BAD_FILTER_PARAMS="wrong number of parameters; expected pattern-match(es) following options"
 
 function filter.script() {
-
-    local head=${head:-''} tail=${tail:-''} quote=${quote:-"'"} flags;
-
+    local flags;
     [[ "$1" == -e ]] && { # for invert match == '-e[xclude]'
       flags="-v"; shift;
     }
@@ -16,9 +14,8 @@ function filter.script() {
     } >&2;
     
     shift;
-    
     echo -n grep -E $flags;
-    while (( $# )); do printf " -e ${quote}${head}%s${tail}${quote}" "$1"; shift; done; 
+    while (( $# )); do printf " -e ${REQ}${REH}%s${RET}${REQ}" "$1"; shift; done; 
     echo ';';
     
 }

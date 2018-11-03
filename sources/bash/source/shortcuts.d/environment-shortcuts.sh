@@ -7,7 +7,7 @@ function -h() {
   (( $# == 0 )) && {
     --help
   }
-  head=\^ call "${@}";
+  REH=\^ call "${@}";
 }
 
 function trace() {
@@ -15,23 +15,23 @@ function trace() {
 }
 
 function -q:() {
-  quote=$1 call "${@:2}";
+  REQ=$1 call "${@:2}";
 }
 
 function -Q:() { # this option only affects subset
-  split=$1 call "${@:2}";
+  RES=$1 call "${@:2}";
 }
 
 function -t() {
-  tail=\$ call "${@}";
+  RET=\$ call "${@}";
 }
 
 function -t:() {
-  tail=$1 call "${@:2}";
+  RET=$1 call "${@:2}";
 }
 
 function -h:() {
-  head=$1 call "${@:2}";
+  REH=$1 call "${@:2}";
 }
 
 function -z() { # reset IFS
