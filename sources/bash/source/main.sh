@@ -54,7 +54,7 @@ function call() {
 
   key-within-list "$1" -- $(echo $FUNCTIONS) && debug.dump.trace
 
-  key-within-list "$1" -- $OPTIONS $FUNCTIONS $DEBUG_FUNCTIONS && { 
+  key-within-list "$1" -- $OPTIONS $FUNCTIONS && { 
     "$@"; exit $?; 
   };
   
