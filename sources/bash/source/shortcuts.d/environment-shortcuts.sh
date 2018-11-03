@@ -1,6 +1,6 @@
 function --get-theatre() {
-  echo OPTIONS=\"${OPTIONS//$'\n'/ }\";
-  echo FUNCTIONS=\"${FUNCTIONS//$'\n'/ }\";
+  echo OPTIONS=\"${OPTIONS}\";
+  echo FUNCTIONS=\"${FUNCTIONS}\";
 }
 
 function -h() {

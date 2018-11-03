@@ -18,7 +18,7 @@ function links() {
   (( include )) && {
     for file; do
       if [[ -h "$file" ]]; then 
-        echo "$file";
+        printf "%s$RSO" "$file";
       fi;
     done;
     return 0;
@@ -26,7 +26,7 @@ function links() {
   
   for file; do
     if [[ -h "$file" ]]; then continue; fi;
-    echo "$file";
+    printf "%s$RSO" "$file";
   done;
   
   return 0;
