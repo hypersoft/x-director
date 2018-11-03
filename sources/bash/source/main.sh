@@ -1,25 +1,25 @@
 
-declare -A CONFIG
+declare -A profile
 
-function create-opkit-config() {
+function create-opkit-profile() {
 
-  opkit.begin CONFIG;
+  opkit.begin profile;
 
   local short=$(write-parameter-pipe $OPTIONS | subset '^\--?' '' ':' '' '([a-z]+-?[a-z])+' '');
 	# echo $short
-	opkit.set CONFIG [SHORT]="${short}"
+	opkit.set profile [SHORT]="${short}"
 
 	local long=$(write-parameter-pipe $OPTIONS | subset '^-[a-zA-Z]:?' '' '^--' '')
 	#echo $long
-	opkit.set CONFIG [LONG]="${long}"
+	opkit.set profile [LONG]="${long}"
 
 	local settings=$(write-parameter-pipe $OPTIONS | filter -- '\:$' | subset '^-|\:$' '')
 	#echo $settings
-	opkit.set CONFIG [SETTINGS]="$settings"
+	opkit.set profile [SETTINGS]="$settings"
 
 	local has_default=$(write-parameter-pipe $short | uniq -D | uniq)
 	#echo $has_default
-	opkit.set CONFIG [HAS_DEFAULT]="${has_default}"
+	opkit.set profile [HAS_DEFAULT]="${has_default}"
 	
 }
 
@@ -58,26 +58,26 @@ function call() {
     "$@"; exit $?; 
   };
   
-  declare -A parse;
-  opkit.begin CONFIG;
+  declare -A operation;
+  opkit.begin profile;
 
-  opkit.parse CONFIG parse "$@" || {
-    echo "$COMMAND parameter parse error: code: $?: parameter #${parse[POINT]} didn't parse" >&2;
-    opkit.dump parse;
+  opkit.parse profile operation "$@" || {
+    echo "$COMMAND parameter parse error: code: $?: parameter #${operation[POINT]} didn't parse" >&2;
+    opkit.dump operation;
     exit $code;
   }
   
-  (( parse[BRANCH] > 5 )) && {
-    local cmd="-${parse[PARAMETER]}";
-    (( parse[SIZE] == 2 )) && cmd+=":";
-    if [[ -n "${parse[VALUE]}" ]]; then
-      $cmd: "${parse[VALUE]}" "${@:2}"; exit $?;    
+  (( operation[BRANCH] > 5 )) && {
+    local cmd="-${operation[PARAMETER]}";
+    (( operation[SIZE] == 2 )) && cmd+=":";
+    if [[ -n "${operation[VALUE]}" ]]; then
+      $cmd: "${operation[VALUE]}" "${@:2}"; exit $?;    
     else
-      $cmd -${parse[INPUT]:2} "${@:2}"; exit $?;
+      $cmd -${operation[INPUT]:2} "${@:2}"; exit $?;
     fi;
   }
   
-  (( DEBUG )) && opkit.dump parse;
+  (( DEBUG )) && opkit.dump operation;
 
   {
     echo invalid command: "\`$1'";
@@ -87,7 +87,7 @@ function call() {
   
 }
 
-create-opkit-config;
+create-opkit-profile;
 
 call "$@";
 
