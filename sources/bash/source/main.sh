@@ -59,7 +59,6 @@ function call() {
   };
   
   declare -A operation;
-  opkit.begin profile;
 
   opkit.parse profile operation "$@" || {
     echo "$COMMAND parameter parse error: code: $?: parameter #${operation[POINT]} didn't parse" >&2;
@@ -70,6 +69,7 @@ function call() {
   (( operation[BRANCH] > 5 )) && {
     local cmd="-${operation[PARAMETER]}";
     (( operation[SIZE] == 2 )) && cmd+=":";
+    opkit.set profile [SUBINDEX]=0;
     if [[ -n "${operation[VALUE]}" ]]; then
       $cmd: "${operation[VALUE]}" "${@:2}"; exit $?;    
     else
