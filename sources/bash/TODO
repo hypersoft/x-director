@@ -1,0 +1,17 @@
+  table, rows, columns
+
+  join, split
+
+  modify case
+  
+  mask expression
+  
+  let function be any command
+  
+  create file lists by age filtering
+  
+  Lesser used functions, having no short-cuts.
+  
+  shamelessly snatch some string functions from GNU make
+  
+
