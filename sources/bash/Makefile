@@ -6,8 +6,7 @@ include $(PACKAGE_PREFIX)/config.mk
 
 all: $(PROJECT_PROGRAM)
 
-$(PROJECT_OUTPUT_DIR)/functions.lst: $(PROJECT_AUX_SCRIPTS)
-	@mkdir -p $(PROJECT_OUTPUT_DIRECTORIES)
+$(PROJECT_OUTPUT_DIR)/functions.lst: $(PROJECT_AUX_SCRIPTS) $(PROJECT_HELP_SCRIPT)
 	$(PACKAGE_PREFIX)/bin/list-script-functions $^ > $@
 
 $(PROJECT_OUTPUT_DIR)/options.sh: $(PROJECT_OUTPUT_DIR)/functions.lst
@@ -24,6 +23,10 @@ $(PROJECT_PROGRAM): $(PROJECT_AUX_SCRIPT) $(PACKAGE_PREFIX)/Makefile $(PACKAGE_P
 	@mkdir -p `dirname $@`
 	$(PACKAGE_PREFIX)/bin/link $(PROJECT_SCRIPT_INTERPRETER) $< > $@
 	chmod +x $@
+
+$(PROJECT_HELP_SCRIPT): $(shell echo $(PROJECT_HELP_SOURCE_DIR)/text.d/*) $(shell echo $(PROJECT_HELP_SOURCE_DIR)/*.txt)
+	@mkdir -p $(PROJECT_OUTPUT_DIRECTORIES)
+	$(PROJECT_HELP_SOURCE_DIR)/help.auto.sh > $@
 
 export-program-dependency-files:
 	@echo $(PROJECT_LIBRARY_SCRIPTS) $(PROJECT_AUX_SCRIPTS) $(PROJECT_MAIN_SCRIPT) $(PACKAGE_PREFIX)/Makefile $(PACKAGE_PREFIX)/config.mk

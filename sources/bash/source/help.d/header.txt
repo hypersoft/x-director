@@ -1,0 +1,15 @@
+function --help() {
+
+cat <<EOF
+
+$COMMAND [OPTIONS] FUNCTION [...]
+
+General Purpose, Mutliple Record, File, Expression and Execution: Utility
+
+ ALL EXPRESSIONS, REGULARLY: EXTENDED.
+
+License: MIT
+GitHub: https://github.com/hypersoft/x-director
+
+(C) 2018; Triston-Jerard: Taylor;
+          Hypersoft-Systems: U.-S.-A.
