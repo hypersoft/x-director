@@ -22,6 +22,12 @@ $(PROJECT_PROGRAM): $(PROJECT_AUX_SCRIPT) Makefile config.mk
 	bin/link /bin/bash $< > $@
 	chmod +x $@
 
+build-dependency-list:
+	@realpath $(PROJECT_LIBRARY_SCRIPTS) $(PROJECT_AUX_SCRIPTS) $(PROJECT_MAIN_SCRIPT) Makefile config.mk;
+
+build-program-file:
+	@echo $(PROJECT_PROGRAM)
+
 clean:
 	@rm -vrf $(BUILD_OUTPUT_DIRECTORIES) $(PROJECT_PROGRAM)
 
