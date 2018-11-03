@@ -4,8 +4,7 @@ echo "
 ## Compound Shell Script
 ##
 ## build-date: $(date)
-## build-timestamp: $(date +%s)
-";
+## build-timestamp: $(date +%s)";
 
 for file; do
 	echo "
