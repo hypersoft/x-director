@@ -44,6 +44,8 @@ FUNCTIONS
    Searches through VALUE(S) for KEY. Returns success if literally found. Ready
    made for read-parameter-pipe FUNCTION.
 
+ line-count Performs line counting on stdin.
+
  set-case TYPE  Reads records from input and modifies the case according to
                 TYPE. Where type is one of: flipped, upper or lower.
 
