@@ -54,7 +54,7 @@ function call() {
 
   key-within-list "$1" -- $(echo $FUNCTIONS) && debug.dump.trace
 
-  key-within-list "$1" -- $OPTIONS $FUNCTIONS create-opkit-profile filter.script && { 
+  key-within-list "$1" -- $OPTIONS $FUNCTIONS && { 
     "$@"; exit $?; 
   };
   
