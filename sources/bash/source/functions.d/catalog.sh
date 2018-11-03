@@ -8,7 +8,7 @@ function catalog(){
     echo
     echo "$COMMAND: ${FUNCNAME}: error: directory names must be preceeded by \`--' for disambiguation of options and files"
     echo
-    echo $'\t'try: $COMMAND ${FUNCNAME} [ NUMBER] -- DIRECTORY ...
+    echo $'\t'try: $COMMAND ${FUNCNAME} [NUMBER] -- DIRECTORY ...
     echo
     exit 1;
   } >&2;
