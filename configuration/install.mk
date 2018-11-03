@@ -1,4 +1,4 @@
-$(XD_PROGRAM_DIST): $(XD_PROGRAM)
+$(XD_PROGRAM_DIST): $(XD_PROGRAM_LOCAL)
 	@cp -vu $< $@
 
 uninstall:
