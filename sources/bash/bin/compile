@@ -11,7 +11,8 @@ for file; do
 ##: start of file: $file
 ##";
 	cat $file;
-	echo "##
+	echo "
+##
 ##: end of file: $file"
 done
 
