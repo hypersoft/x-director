@@ -1,0 +1,5 @@
+#!/bin/bash
+
+(( $# )) && cat "$@" | grep -E '^function' | sed -E -e 's/\s*function\s+//g' -e 's/\s*\(.*//g';
+
+true;
