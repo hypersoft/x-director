@@ -1,4 +1,3 @@
-
 NOTE:
 
  (1) OPTIONS affect the output of FUNCTIONS.
