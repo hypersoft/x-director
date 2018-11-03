@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for script; do
+echo "##
+## shell functionized: $script
+##"
+echo function $(basename $script) '()' \{
+(read line; cat) < $script;
+echo '}
+'
+done;
