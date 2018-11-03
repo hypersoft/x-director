@@ -104,6 +104,9 @@ FUNCTIONS
  links [-e] -- FILE ...   Lists only the links in FILE(S). With \`-e', lists
                           all files which are NOT links.
 
+ mask-match  Reads records from stdin, masking all special matching characters.
+             The result of this operation creates a plain-text-match.
+
  read-parameter-pipe  COMMAND or FUNCTION [OPTIONS]
 
    Read lines from input and send them as parameters to COMMAND or FUNCTION
