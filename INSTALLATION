@@ -6,6 +6,6 @@ to uninstall:
 
   sudo make uninstall
 
-The program will be installed to /bin
+The program will be installed to /usr/bin
 
 If you need a different installation path, you must edit Makefile.
