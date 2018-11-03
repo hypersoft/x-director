@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "
+## Compound Shell Script
+##
+## build-date: $(date)
+## build-timestamp: $(date +%s)
+";
+
+for file; do
+	echo "
+##: start of file: $file
+##";
+	cat $file;
+	echo "##
+##: end of file: $file"
+done
+
