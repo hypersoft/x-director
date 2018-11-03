@@ -7,7 +7,7 @@ dist/bin/xd: $(shell find sources/bash/source -type f -name '*.sh') sources/bash
 	@cp -vu sources/bash/build/xd dist/bin/xd
 
 install:
-	@cp -vu bin/xd /bin
+	@cp -vu dist/bin/xd /bin
 
 uninstall:
 	@rm -vrf /bin/xd
