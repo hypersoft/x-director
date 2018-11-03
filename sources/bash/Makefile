@@ -23,13 +23,13 @@ $(PROJECT_PROGRAM): $(PROJECT_AUX_SCRIPT) Makefile config.mk
 	chmod +x $@
 
 export-program-dependency-files:
-	@echo $(PROJECT_LIBRARY_SCRIPTS) $(PROJECT_AUX_SCRIPTS) $(PROJECT_MAIN_SCRIPT) Makefile config.mk;
+	@echo $(addprefix $(PREFIX)/,$(PROJECT_LIBRARY_SCRIPTS) $(PROJECT_AUX_SCRIPTS) $(PROJECT_MAIN_SCRIPT) Makefile config.mk);
 
 export-program-name:
 	@echo $(PROJECT_PROGRAM_NAME)
 
 export-program-directory:
-	@echo $(BUILD_PROGRAM_DIR)
+	@echo $(PREFIX)/$(BUILD_PROGRAM_DIR)
 
 clean:
 	@rm -vrf $(BUILD_OUTPUT_DIRECTORIES) $(PROJECT_PROGRAM)
