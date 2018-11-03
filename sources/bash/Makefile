@@ -11,10 +11,10 @@ $(PROJECT_OUTPUT_DIR)/functions.lst: $(PROJECT_AUX_SCRIPTS)
 	$(PACKAGE_PREFIX)/bin/list-script-functions $^ > $@
 
 $(PROJECT_OUTPUT_DIR)/options.sh: $(PROJECT_OUTPUT_DIR)/functions.lst
-	@printf "OPTIONS='\n%s\n';\n" "`grep -E -e '^-' $< `" > $@;
+	@printf "declare OPTIONS='\n%s\n';\n" "`grep -E -e '^-' $< `" > $@;
 
 $(PROJECT_OUTPUT_DIR)/functions.sh: $(PROJECT_OUTPUT_DIR)/functions.lst
-	@printf "FUNCTIONS='\n%s\n';\n" "`grep -E -v -e '^-' -e '\.' -e '^call' $<`" > $@;
+	@printf "declare FUNCTIONS='\n%s\n';\n" "`grep -E -v -e '^-' -e '\.' -e '^call' $<`" > $@;
 
 $(PROJECT_AUX_SCRIPT): $(PROJECT_LIBRARY_SCRIPTS) $(PROJECT_AUX_SCRIPTS) $(PROJECT_AUTO_SCRIPTS) $(PROJECT_MAIN_SCRIPT)
 	@mkdir -p $(PROJECT_OUTPUT_DIRECTORIES)
