@@ -1,11 +1,8 @@
 
-ifndef BUILD_PROGRAM_DIR
-BUILD_PROGRAM_DIR := bin
-endif
-
-BUILD_OUTPUT_DIR = build
 BUILD_SOURCE_DIR = source
+BUILD_OUTPUT_DIR := build
 
+BUILD_PROGRAM_DIR := $(BUILD_OUTPUT_DIR)
 BUILD_OUTPUT_DIRECTORIES = $(BUILD_OUTPUT_DIR)
 
 PROJECT_AUX_DIRS != echo $(BUILD_SOURCE_DIR)/{environment.d,functions.d,shortcuts.d}
