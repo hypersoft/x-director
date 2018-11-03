@@ -105,7 +105,8 @@ FUNCTIONS
                           all files which are NOT links.
 
  mask-match  Reads records from stdin, masking all special matching characters.
-             The result of this operation creates a plain-text-match.
+             The result of this operation creates a plain-text-source-match-
+             expression.
 
  read-parameter-pipe  COMMAND or FUNCTION [OPTIONS]
 
