@@ -125,6 +125,9 @@ FUNCTIONS
    Searches through VALUE(S) for KEY. Returns success if literally found. Ready
    made for read-parameter-pipe FUNCTION.
 
+ set-case TYPE  Reads records from input and modifies the case according to
+                TYPE. Where type is one of: flipped, upper or lower.
+
  subset CUT-PATTERN PASTE-TEXT[ CUT-PATTERN PASTE-TEXT[ ...]]
 
    Searches through stdin line records using CUT-PATTERN and replaces matches

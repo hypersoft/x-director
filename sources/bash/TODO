@@ -2,8 +2,6 @@
 
   join, split
 
-  modify case
-  
   create file lists by age filtering
   
   Lesser used functions, having no short-cuts.
