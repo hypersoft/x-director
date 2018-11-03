@@ -6,8 +6,8 @@ FUNCTIONS
    maximum depth of the search; where 1 means do not traverse any children of
    the DIRECTORY; 2 is children of child DIRECTORY, so on and so forth.
 
- cols NUMBER ...  Reads each row from stdin and prints each column NUMBER given.
- 
+ columns NUMBER ...  Reads each row from stdin and prints each column NUMBER given.
+
  command [OPTIONS]        Runs the system command with the given options.
  
  directories FILE ...     Lists only the directories in FILE(S).
@@ -58,4 +58,9 @@ FUNCTIONS
    Searches through stdin line records using CUT-PATTERN and replaces matches
    with PASTE-TEXT. Multiple CUT-PATTERN and PASTE-TEXT expressions may be
    supplied. Use the write-parameter-pipe FUNCTION if stdio is not convenient.
+
+ table ROWS COLS  Reads ROWS and COLS to stdout. Each parameter is passed to
+                  the row or columns FUNCTION. Such as table "1 3 2" "1 9";
+                  has the meaning select rows 1, 3 and 2, print column 1 and
+                  column 9.
 

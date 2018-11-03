@@ -30,3 +30,7 @@ function rows() {
 		printf "%s" "${lines[$x]/$RSI/$RSO}"
 	done;
 }
+
+function table() {
+	rows $1 | columns $2;
+}
