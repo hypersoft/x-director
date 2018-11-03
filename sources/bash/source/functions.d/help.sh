@@ -87,6 +87,8 @@ FUNCTIONS
    maximum depth of the search; where 1 means do not traverse any children of
    the DIRECTORY; 2 is children of child DIRECTORY, so on and so forth.
 
+ command [OPTIONS]        Runs the system command with the given options.
+ 
  directories FILE ...     Lists only the directories in FILE(S).
  files FILE ...           Lists only the file(s) in FILE(S).
 
